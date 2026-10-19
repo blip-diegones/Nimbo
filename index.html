@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>B Lugar Legal 🍔 | Cardápio & Delivery Oficial</title>
+  <meta name="description" content="Faça seu pedido online no B Lugar Legal. Hambúrgueres artesanais, porções e bebidas com entrega rápida e pagamento fácil via PIX.">
+  
+  <!-- Fontes Google -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body style="background: #F8FAFC;">
+
+  <!-- APP DO CLIENTE: 100% LIMPO E FOCADO NA COMPRA -->
+  <div class="cardapio-wrapper" style="margin: 0 auto; box-shadow: none; min-height: 100vh;">
+    
+    <!-- SUB-TELA A: VITRINE DE PRODUTOS -->
+    <div id="menu-view-container">
+      
+      <!-- Capa da Loja -->
+      <div class="store-cover">
+        <div class="store-status-badge">
+          <span class="status-dot"></span> Aberto Agora
+        </div>
+      </div>
+
+      <!-- Perfil e Informações da Loja -->
+      <div class="store-profile">
+        <div class="store-avatar-box">
+          <img src="https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=250&q=80" alt="B Lugar Legal" class="store-avatar">
+          <div class="store-info">
+            <h2>B Lugar Legal 🍔</h2>
+            <p class="store-tagline">Hambúrgueres Artesanais, Porções & Sucos</p>
+          </div>
+        </div>
+
+        <div class="store-meta-pills">
+          <span class="meta-pill rating">⭐ 4.9 (1.4k+)</span>
+          <span class="meta-pill">⏱️ 30-45 min</span>
+          <span class="meta-pill">🛵 Entrega R$ 6,00</span>
+          <span class="meta-pill">⚡ Pedido Mínimo R$ 15</span>
+        </div>
+      </div>
+
+      <!-- Categorias Horizontais em Abas -->
+      <div class="categories-nav">
+        <button class="cat-btn active" onclick="filterCategory('todos', this)">🔥 Todos</button>
+        <button class="cat-btn" onclick="filterCategory('destaques', this)">⭐ Mais Pedidos</button>
+        <button class="cat-btn" onclick="filterCategory('lanches', this)">🍔 Hambúrgueres</button>
+        <button class="cat-btn" onclick="filterCategory('porcoes', this)">🍟 Porções</button>
+        <button class="cat-btn" onclick="filterCategory('bebidas', this)">🥤 Bebidas</button>
+        <button class="cat-btn" onclick="filterCategory('sobremesas', this)">🍰 Sobremesas</button>
+      </div>
+
+      <!-- Grid de Itens do Cardápio -->
+      <div class="menu-section">
+        <div class="section-heading">
+          <h3>Nosso Cardápio</h3>
+          <span>Toque no item para escolher</span>
+        </div>
+        <div class="products-grid" id="products-grid">
+          <!-- Renderizado via app.js -->
+        </div>
+      </div>
+
+      <!-- Rodapé Discreto da Loja -->
+      <footer style="text-align: center; padding: 24px 16px 40px; color: #94A3B8; font-size: 11px;">
+        <p>B Lugar Legal • CNPJ 00.000.000/0001-00</p>
+        <p style="margin-top: 4px;">Rua Padre João Manoel, 154 - Carioca, São Lourenço</p>
+        <p style="margin-top: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; color: #64748B;">
+          <svg width="14" height="14" viewBox="0 0 32 32" fill="none"><path d="M10 22C7.79086 22 6 20.2091 6 18C6 15.9818 7.49557 14.3129 9.44498 14.0454C9.89736 10.6358 12.8021 8 16.3636 8C19.4674 8 22.0674 10.0076 22.9511 12.7936C24.7118 13.2081 26 14.7797 26 16.6667C26 18.8758 24.2091 20.6667 22 20.6667H21" stroke="#64748B" stroke-width="2.5"/><path d="M12 21V13.5L18.5 21V13.5" stroke="#64748B" stroke-width="2.5"/></svg>
+          <span>Powered by <strong>Nimbo</strong> • Tudo flui melhor.</span>
+        </p>
+      </footer>
+    </div>
+
+    <!-- SUB-TELA B: CHECKOUT & PAGAMENTO PIX -->
+    <div id="checkout-view-container" style="display: none;" class="checkout-section">
+      <div class="checkout-header">
+        <button class="back-btn" onclick="backToMenu()">←</button>
+        <h3 style="font-weight: 800; font-size: 18px;">Finalizar Pedido</h3>
+      </div>
+
+      <!-- Tipo de Pedido -->
+      <div class="checkout-card">
+        <div class="card-label">📍 Como deseja receber?</div>
+        <div class="delivery-type-selector">
+          <div class="type-tab active" data-type="delivery" onclick="setDeliveryType('delivery')">
+            🛵 Delivery<br><small style="opacity: 0.8;">Taxa R$ 6,00</small>
+          </div>
+          <div class="type-tab" data-type="retirada" onclick="setDeliveryType('retirada')">
+            🛍️ Retirada<br><small style="opacity: 0.8;">Sem taxa</small>
+          </div>
+          <div class="type-tab" data-type="mesa" onclick="setDeliveryType('mesa')">
+            🍽️ Na Mesa<br><small style="opacity: 0.8;">No Salão</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dados do Cliente -->
+      <div class="checkout-card">
+        <div class="card-label">👤 Seus Dados</div>
+        <div class="form-group">
+          <label>Seu Nome Completo</label>
+          <input type="text" class="form-input" id="client-name" value="Diego" placeholder="Ex: Diego Silva">
+        </div>
+        <div class="form-group">
+          <label>WhatsApp (para receber status no Zap)</label>
+          <input type="tel" class="form-input" id="client-phone" value="(11) 98765-4321" placeholder="(00) 00000-0000">
+        </div>
+        
+        <div id="address-fields-group">
+          <div class="form-group">
+            <label>Endereço e Número</label>
+            <input type="text" class="form-input" id="client-address" value="Rua Padre João Manoel, 154" placeholder="Rua, Número e Bairro">
+          </div>
+          <div class="form-group">
+            <label>Complemento / Ponto de Referência</label>
+            <input type="text" class="form-input" id="client-comp" value="Frente, Carioca" placeholder="Apto, Bloco, Casa da frente">
+          </div>
+        </div>
+
+        <div id="mesa-field-group" style="display: none;">
+          <div class="form-group">
+            <label>Número da Mesa no Salão</label>
+            <input type="number" class="form-input" id="client-mesa" value="05" placeholder="Ex: 05">
+          </div>
+        </div>
+      </div>
+
+      <!-- Forma de Pagamento -->
+      <div class="checkout-card">
+        <div class="card-label">💳 Pagamento</div>
+        <div class="payment-options">
+          <div class="pay-opt active" data-method="pix" onclick="setPaymentMethod('pix')">
+            <div class="pay-opt-info">
+              <span>⚡</span>
+              <span>PIX Instantâneo</span>
+            </div>
+            <span class="pay-badge-pix">Recomendado</span>
+          </div>
+
+          <div class="pay-opt" data-method="dinheiro" onclick="setPaymentMethod('dinheiro')">
+            <div class="pay-opt-info">
+              <span>💵</span>
+              <span>Dinheiro na Entrega</span>
+            </div>
+          </div>
+
+          <div class="pay-opt" data-method="cartao" onclick="setPaymentMethod('cartao')">
+            <div class="pay-opt-info">
+              <span>💳</span>
+              <span>Cartão na Maquininha</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bloco PIX Instantâneo -->
+        <div class="pix-instant-box" id="pix-details-box">
+          <p style="font-size: 13px; font-weight: 700; color: #166534;">
+            Pague via PIX e seu pedido vai direto para a chapa!
+          </p>
+          <div class="pix-qr-container">
+            <svg width="140" height="140" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="100" height="100" fill="white"/>
+              <rect x="5" y="5" width="28" height="28" fill="#000" rx="4"/>
+              <rect x="9" y="9" width="20" height="20" fill="#fff" rx="2"/>
+              <rect x="13" y="13" width="12" height="12" fill="#000" rx="1"/>
+
+              <rect x="67" y="5" width="28" height="28" fill="#000" rx="4"/>
+              <rect x="71" y="9" width="20" height="20" fill="#fff" rx="2"/>
+              <rect x="75" y="13" width="12" height="12" fill="#000" rx="1"/>
+
+              <rect x="5" y="67" width="28" height="28" fill="#000" rx="4"/>
+              <rect x="9" y="71" width="20" height="20" fill="#fff" rx="2"/>
+              <rect x="13" y="75" width="12" height="12" fill="#000" rx="1"/>
+
+              <rect x="38" y="10" width="8" height="8" fill="#000"/>
+              <rect x="50" y="10" width="8" height="8" fill="#000"/>
+              <rect x="42" y="24" width="16" height="8" fill="#000"/>
+              <rect x="10" y="38" width="8" height="16" fill="#000"/>
+              <rect x="24" y="42" width="12" height="12" fill="#000"/>
+              <rect x="40" y="40" width="20" height="20" fill="#25D366" rx="4"/>
+              <circle cx="50" cy="50" r="5" fill="#fff"/>
+              <rect x="68" y="38" width="8" height="18" fill="#000"/>
+              <rect x="80" y="44" width="12" height="8" fill="#000"/>
+              <rect x="38" y="68" width="8" height="12" fill="#000"/>
+              <rect x="52" y="74" width="14" height="14" fill="#000"/>
+              <rect x="72" y="70" width="18" height="8" fill="#000"/>
+              <rect x="70" y="84" width="8" height="10" fill="#000"/>
+            </svg>
+          </div>
+          <div class="pix-copia-cola-input">
+            <input type="text" class="form-input" id="pix-copia-cola-text" readonly style="font-size: 11px; background: white;">
+            <button class="btn-copy-pix" onclick="copyPixCode()">Copiar Código</button>
+          </div>
+          <p style="font-size: 11px; color: #15803D; margin-top: 6px;">
+            100% seguro • Pagamento instantâneo
+          </p>
+        </div>
+
+        <div id="troco-field-group" style="display: none; margin-top: 12px;">
+          <div class="form-group">
+            <label>Precisa de troco para quanto?</label>
+            <input type="text" class="form-input" placeholder="Ex: R$ 50,00 (ou em branco se não precisar)">
+          </div>
+        </div>
+      </div>
+
+      <!-- Resumo do Pedido -->
+      <div class="checkout-card">
+        <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px;">
+          <span>Subtotal dos Itens:</span>
+          <strong id="checkout-subtotal">R$ 0,00</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px;">
+          <span>Taxa de Entrega:</span>
+          <strong id="checkout-delivery">R$ 6,00</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 16px; font-weight: 800; border-top: 1px dashed var(--border-light); padding-top: 8px; margin-top: 8px; color: var(--brand-orange);">
+          <span>Total a Pagar:</span>
+          <span id="checkout-total">R$ 0,00</span>
+        </div>
+      </div>
+
+      <button class="btn-finish-order" onclick="submitOrder()">
+        <span>🚀 Enviar Pedido para o WhatsApp</span>
+      </button>
+    </div>
+
+    <!-- SUB-TELA C: RASTREAMENTO DO PEDIDO EM TEMPO REAL -->
+    <div id="tracking-view-container" style="display: none;" class="checkout-section">
+      <div class="tracking-card">
+        <div class="tracking-header">
+          <span class="order-badge-number" id="tracking-order-num">Pedido #22</span>
+          <h3 class="tracking-title">Acompanhe seu Pedido</h3>
+          <p class="tracking-eta">Previsão estimada: 30 a 45 minutos</p>
+          <div style="font-size: 14px; font-weight: 800; color: #16A34A; margin-top: 6px;" id="tracking-order-total">
+            Total: R$ 24,00
+          </div>
+        </div>
+
+        <!-- Stepper das 4 Etapas -->
+        <div class="stepper-container">
+          <div class="stepper-step active" id="step-received">
+            <div class="step-icon-box">📥</div>
+            <div class="step-info">
+              <h4>1. Pedido Recebido</h4>
+              <p>Seu pedido foi registrado e encaminhado para a cozinha.</p>
+            </div>
+          </div>
+
+          <div class="stepper-step" id="step-prep">
+            <div class="step-icon-box">🍳</div>
+            <div class="step-info">
+              <h4>2. Em Preparação</h4>
+              <p>Nossos chapeiros estão montando seus hambúrgueres.</p>
+            </div>
+          </div>
+
+          <div class="stepper-step" id="step-route">
+            <div class="step-icon-box">🛵</div>
+            <div class="step-info">
+              <h4>3. Saiu para Entrega</h4>
+              <p>O motoboy já pegou a rota para o seu endereço.</p>
+            </div>
+          </div>
+
+          <div class="stepper-step" id="step-delivered">
+            <div class="step-icon-box">✅</div>
+            <div class="step-info">
+              <h4>4. Pedido Entregue</h4>
+              <p>Entregue com sucesso! Bom apetite!</p>
+            </div>
+          </div>
+        </div>
+
+        <div style="background: #F0FDF4; border-radius: 12px; padding: 14px; margin-top: 16px; border: 1px solid #BBF7D0; text-align: center;">
+          <p style="font-size: 13px; color: #166534; font-weight: 600;">
+            📲 Você também receberá atualizações automáticas no seu WhatsApp a cada etapa!
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Barra Flutuante de Sacola -->
+  <div class="floating-cart-bar hidden" id="floating-cart" onclick="openCartModal()">
+    <div class="cart-bar-left">
+      <div class="cart-items-count" id="cart-count">0</div>
+      <div>
+        <div class="cart-bar-label">Ver Sacola</div>
+        <div class="cart-bar-sub">Toque para revisar seu pedido</div>
+      </div>
+    </div>
+    <div class="cart-bar-total" id="cart-total">R$ 0,00</div>
+  </div>
+
+  <!-- Modal 1: Customização do Produto -->
+  <div class="app-modal" id="product-modal">
+    <div class="modal-content-card">
+      <button class="modal-close-btn" onclick="closeProductModal()">✕</button>
+      <img src="" alt="" class="modal-header-img" id="modal-img">
+      
+      <div class="modal-body">
+        <h3 class="modal-title" id="modal-title">Título do Produto</h3>
+        <p class="modal-desc" id="modal-desc">Descrição do produto</p>
+        <div class="modal-price" id="modal-price-display">R$ 0,00</div>
+
+        <!-- Adicionais e Opcionais -->
+        <div id="modal-addons-container">
+          <!-- Renderizado via app.js -->
+        </div>
+
+        <!-- Observações -->
+        <div class="addon-group">
+          <label style="font-size: 13px; font-weight: 700;">Alguma observação?</label>
+          <textarea class="obs-input" id="modal-obs" placeholder="Ex: Tirar cebola, maionese à parte, ponto da carne..."></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <div class="qty-counter">
+          <button class="qty-btn" onclick="changeModalQty(-1)">-</button>
+          <span class="qty-number" id="modal-qty">1</span>
+          <button class="qty-btn" onclick="changeModalQty(1)">+</button>
+        </div>
+        <button class="btn-add-modal" onclick="addCurrentToCart()">
+          <span>Adicionar</span>
+          <span id="modal-btn-total">R$ 0,00</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 2: Sacola / Carrinho -->
+  <div class="app-modal" id="cart-modal">
+    <div class="modal-content-card">
+      <div style="padding: 16px 20px; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="font-size: 18px; font-weight: 800;">Sua Sacola</h3>
+        <button class="modal-close-btn" style="position: static; width: 30px; height: 30px; background: #F1F5F9; color: #0F172A;" onclick="closeCartModal()">✕</button>
+      </div>
+
+      <div class="modal-body" id="cart-items-list" style="max-height: 400px; overflow-y: auto;">
+        <!-- Lista de itens do carrinho -->
+      </div>
+
+      <div style="padding: 16px 20px; background: #F8FAFC; border-top: 1px solid var(--border-light);">
+        <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px;">
+          <span>Subtotal:</span>
+          <strong id="cart-subtotal-val">R$ 0,00</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px;">
+          <span>Taxa de Entrega:</span>
+          <strong id="cart-delivery-val">R$ 6,00</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 16px; font-weight: 800; border-top: 1px dashed #CBD5E1; padding-top: 8px; margin-top: 8px;">
+          <span>Total:</span>
+          <span style="color: var(--brand-orange);" id="cart-grandtotal-val">R$ 0,00</span>
+        </div>
+
+        <button class="btn-finish-order" style="margin-top: 16px;" onclick="goToCheckout()">
+          Avançar para Entrega e Pagamento ➔
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

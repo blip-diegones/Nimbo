@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel do Restaurante | Nimbo</title>
+  <meta name="description" content="Painel de controle do restaurante: gestor de pedidos KDS, gerenciamento de cardápio, configurações de PIX e robô de WhatsApp. Powered by Nimbo.">
+  
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Estilos exclusivos do Painel do Restaurante */
+    .admin-layout {
+      display: flex;
+      min-height: 100vh;
+      background: var(--nimbo-navy);
+      color: var(--nimbo-white);
+    }
+
+    .admin-sidebar {
+      width: 270px;
+      background: var(--nimbo-navy-surface);
+      border-right: 1px solid var(--nimbo-border);
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .admin-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      background: var(--nimbo-navy-card);
+      border: 1px solid var(--nimbo-border);
+      border-radius: var(--radius-md);
+      margin-bottom: 20px;
+    }
+
+    .admin-logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      object-fit: cover;
+      border: 2px solid var(--nimbo-lime);
+    }
+
+    .admin-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      color: var(--nimbo-text-secondary);
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid transparent;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+      transition: all 0.2s;
+    }
+
+    .nav-item:hover {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--nimbo-white);
+    }
+
+    .nav-item.active {
+      background: var(--nimbo-lime);
+      color: var(--nimbo-navy);
+      border-color: var(--nimbo-lime);
+      box-shadow: 0 4px 14px var(--nimbo-lime-glow);
+    }
+
+    .nav-item .badge {
+      margin-left: auto;
+      background: rgba(11, 18, 32, 0.15);
+      color: var(--nimbo-navy);
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+      font-weight: 800;
+    }
+    
+    .nav-item:not(.active) .badge {
+      background: var(--nimbo-navy-card);
+      color: var(--nimbo-lime);
+    }
+
+    .admin-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .admin-header {
+      background: var(--nimbo-navy-surface);
+      border-bottom: 1px solid var(--nimbo-border);
+      padding: 16px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .admin-section {
+      padding: 28px;
+      display: none;
+      animation: fadeIn 0.2s ease-out;
+    }
+
+    .admin-section.active {
+      display: block;
+    }
+
+    /* Tabela e Cards de Cardápio */
+    .menu-mgmt-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+      background: #1E293B;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      border: 1px solid #334155;
+    }
+
+    .menu-mgmt-table th {
+      background: #0F172A;
+      padding: 14px 18px;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 700;
+      color: #94A3B8;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .menu-mgmt-table td {
+      padding: 14px 18px;
+      border-bottom: 1px solid #334155;
+      font-size: 13.5px;
+      vertical-align: middle;
+    }
+
+    .status-switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+    }
+
+    .status-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .switch-slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background-color: #475569;
+      transition: .3s;
+      border-radius: 24px;
+    }
+
+    .switch-slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+    }
+
+    input:checked + .switch-slider {
+      background-color: #10B981;
+    }
+
+    input:checked + .switch-slider:before {
+      transform: translateX(20px);
+    }
+
+    .form-card {
+      background: #1E293B;
+      border: 1px solid #334155;
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="admin-layout">
+    
+    <!-- SIDEBAR DE NAVEGAÇÃO DO RESTAURANTE -->
+    <aside class="admin-sidebar">
+      <div>
+        <!-- Marca Oficial Nimbo -->
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid var(--nimbo-border);">
+          <div class="nimbo-brand">
+            <span class="nimbo-logo-icon">
+              <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
+                <path d="M10 22C7.79086 22 6 20.2091 6 18C6 15.9818 7.49557 14.3129 9.44498 14.0454C9.89736 10.6358 12.8021 8 16.3636 8C19.4674 8 22.0674 10.0076 22.9511 12.7936C24.7118 13.2081 26 14.7797 26 16.6667C26 18.8758 24.2091 20.6667 22 20.6667H21" stroke="#B8F36B" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M12 21V13.5L18.5 21V13.5" stroke="#B8F36B" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <span class="nimbo-logo-wordmark">nimbo</span>
+          </div>
+          <span style="font-size: 10px; font-weight: 800; color: var(--nimbo-lime); background: rgba(184, 243, 107, 0.1); padding: 2px 8px; border-radius: var(--radius-full); border: 1px solid rgba(184, 243, 107, 0.25);">
+            PAINEL
+          </span>
+        </div>
+
+        <!-- Identidade do Restaurante Assinante -->
+        <div class="admin-brand">
+          <img src="https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=250&q=80" alt="B Lugar Legal" class="admin-logo">
+          <div>
+            <div style="font-weight: 800; font-size: 15px; color: var(--nimbo-white);">B Lugar Legal 🍔</div>
+            <div style="font-size: 11px; color: var(--nimbo-lime); font-weight: 700;">● Loja Aberta</div>
+          </div>
+        </div>
+
+        <nav class="admin-nav">
+          <button class="nav-item active" onclick="switchAdminSection('kds', this)">
+            <span>🍳</span> Gestor de Cozinha (KDS)
+            <span class="badge" id="sidebar-order-badge">1</span>
+          </button>
+          
+          <button class="nav-item" onclick="switchAdminSection('cardapio', this)">
+            <span>🍔</span> Cardápio & Estoque
+          </button>
+          
+          <button class="nav-item" onclick="switchAdminSection('whatsapp', this)">
+            <span>🤖</span> Robô de WhatsApp
+          </button>
+          
+          <button class="nav-item" onclick="switchAdminSection('config', this)">
+            <span>⚙️</span> Dados da Loja & PIX
+          </button>
+
+          <button class="nav-item" onclick="switchAdminSection('relatorios', this)">
+            <span>📊</span> Relatórios & Métricas
+          </button>
+        </nav>
+      </div>
+
+      <!-- Rodapé da Sidebar -->
+      <div style="border-top: 1px solid var(--nimbo-border); padding-top: 16px;">
+        <a href="index.html" target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; background: var(--nimbo-lime); color: var(--nimbo-navy); text-decoration: none; padding: 10px; border-radius: var(--radius-md); font-weight: 800; font-size: 13px; box-shadow: 0 4px 14px var(--nimbo-lime-glow);">
+          🔗 Ver Cardápio Online ↗
+        </a>
+      </div>
+    </aside>
+
+    <!-- ÁREA PRINCIPAL DO PAINEL -->
+    <div class="admin-main">
+      
+      <!-- HEADER DO LOJISTA -->
+      <header class="admin-header">
+        <div>
+          <h2 style="font-size: 18px; font-weight: 800;" id="section-title">🍳 Gestor de Pedidos da Cozinha (KDS)</h2>
+          <p style="font-size: 12px; color: #94A3B8;">Acompanhamento em tempo real • Conectado ao WhatsApp oficial</p>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <button class="sound-toggle-btn" id="sound-toggle">
+            🔊 <span>Som Ligado</span>
+          </button>
+          <button class="btn-demo-cta" style="padding: 6px 14px; font-size: 12px; color: white;" onclick="sounds.playNewOrder()">
+            🔔 Testar Som do Pedido
+          </button>
+          <div style="background: #14532D; color: #86EFAC; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 6px;">
+            <span class="status-dot"></span> Aberto para Pedidos
+          </div>
+        </div>
+      </header>
+
+      <!-- 1. SEÇÃO KDS (GESTOR DE PEDIDOS DA COZINHA) -->
+      <section class="admin-section active" id="sec-kds">
+        <!-- Métricas Rápidas do Dia -->
+        <div class="kds-stats-strip">
+          <div class="stat-card" style="background: #1E293B; border-color: #334155; color: white;">
+            <div class="stat-icon green">💰</div>
+            <div>
+              <div class="stat-val" id="kds-stat-revenue" style="color: white;">R$ 1.485,00</div>
+              <div class="stat-title" style="color: #94A3B8;">Faturamento Hoje</div>
+            </div>
+          </div>
+
+          <div class="stat-card" style="background: #1E293B; border-color: #334155; color: white;">
+            <div class="stat-icon orange">📦</div>
+            <div>
+              <div class="stat-val" id="kds-stat-count" style="color: white;">23</div>
+              <div class="stat-title" style="color: #94A3B8;">Pedidos Hoje</div>
+            </div>
+          </div>
+
+          <div class="stat-card" style="background: #1E293B; border-color: #334155; color: white;">
+            <div class="stat-icon blue">⏱️</div>
+            <div>
+              <div class="stat-val" style="color: white;">28 min</div>
+              <div class="stat-title" style="color: #94A3B8;">Tempo Médio de Preparo</div>
+            </div>
+          </div>
+
+          <div class="stat-card" style="background: #1E293B; border-color: #334155; color: white;">
+            <div class="stat-icon purple">💳</div>
+            <div>
+              <div class="stat-val" id="kds-stat-ticket" style="color: white;">R$ 64,50</div>
+              <div class="stat-title" style="color: #94A3B8;">Ticket Médio</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quadro Kanban KDS (4 Colunas) -->
+        <div class="kds-board">
+          <div class="kds-column col-new" style="background: #1E293B; border-color: #334155;">
+            <div class="column-header" style="border-color: #F97316;">
+              <span class="column-title" style="color: white;">📥 Novos Pedidos</span>
+              <span class="column-count" id="count-new" style="background: #334155; color: white; border-color: #475569;">0</span>
+            </div>
+            <div class="orders-list" id="kds-orders-new"></div>
+          </div>
+
+          <div class="kds-column col-prep" style="background: #1E293B; border-color: #334155;">
+            <div class="column-header" style="border-color: #EAB308;">
+              <span class="column-title" style="color: white;">🍳 Em Preparo (Cozinha)</span>
+              <span class="column-count" id="count-prep" style="background: #334155; color: white; border-color: #475569;">0</span>
+            </div>
+            <div class="orders-list" id="kds-orders-prep"></div>
+          </div>
+
+          <div class="kds-column col-route" style="background: #1E293B; border-color: #334155;">
+            <div class="column-header" style="border-color: #3B82F6;">
+              <span class="column-title" style="color: white;">🛵 Em Rota (Motoboy)</span>
+              <span class="column-count" id="count-route" style="background: #334155; color: white; border-color: #475569;">0</span>
+            </div>
+            <div class="orders-list" id="kds-orders-route"></div>
+          </div>
+
+          <div class="kds-column col-done" style="background: #1E293B; border-color: #334155;">
+            <div class="column-header" style="border-color: #10B981;">
+              <span class="column-title" style="color: white;">✅ Concluídos</span>
+              <span class="column-count" id="count-done" style="background: #334155; color: white; border-color: #475569;">0</span>
+            </div>
+            <div class="orders-list" id="kds-orders-done"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. SEÇÃO GESTÃO DO CARDÁPIO & ESTOQUE -->
+      <section class="admin-section" id="sec-cardapio">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <div>
+            <h3 style="font-size: 20px; font-weight: 800;">Gerenciar Itens do Cardápio</h3>
+            <p style="font-size: 13px; color: #94A3B8;">Pause itens que esgotaram no dia ou altere preços rapidamente.</p>
+          </div>
+          <button class="btn-nimbo-primary" style="padding: 10px 20px; font-size: 13px;" onclick="openNewProductPrompt()">
+            + Novo Produto
+          </button>
+        </div>
+
+        <table class="menu-mgmt-table">
+          <thead>
+            <tr>
+              <th>Foto & Produto</th>
+              <th>Categoria</th>
+              <th>Preço Atual</th>
+              <th>Status no Cardápio</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="admin-products-table-body">
+            <!-- Renderizado dinamicamente via app.js -->
+          </tbody>
+        </table>
+      </section>
+
+      <!-- 3. SEÇÃO ROBÔ DE ATENDIMENTO WHATSAPP -->
+      <section class="admin-section" id="sec-whatsapp">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start;">
+          
+          <!-- Lado Esquerdo: Configuração das Mensagens -->
+          <div class="form-card">
+            <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 8px;">Mensagens Automáticas da IA</h3>
+            <p style="font-size: 13px; color: #94A3B8; margin-bottom: 20px;">
+              Personalize exatamente como o robô responde aos clientes no WhatsApp.
+            </p>
+
+            <div class="form-group">
+              <label style="color: #CBD5E1; font-weight: 700;">1. Mensagem de Boas-Vindas & Reativação</label>
+              <textarea class="obs-input" id="bot-welcome-msg" style="background: #0F172A; color: white; border-color: #334155; min-height: 100px;">🍔 {nome}, que saudade! Faz tempo desde seu último pedido 😄
+Volte a matar a fome com a gente!
+👉 Abra o cardápio e peça agora! 🔥
+{link_cardapio}
+Estamos sempre abertos.</textarea>
+            </div>
+
+            <div class="form-group" style="margin-top: 16px;">
+              <label style="color: #CBD5E1; font-weight: 700;">2. Confirmação de Pedido em Produção</label>
+              <textarea class="obs-input" id="bot-order-msg" style="background: #0F172A; color: white; border-color: #334155; min-height: 100px;">Oba! Seu pedido está EM PRODUÇÃO! 🥳
+Pedido nº {numero}
+Itens: {itens}
+🛵 Delivery ({taxa})
+Total: {total}</textarea>
+            </div>
+
+            <div class="form-group" style="margin-top: 16px;">
+              <label style="color: #CBD5E1; font-weight: 700;">3. Aviso de Despacho com Motoboy</label>
+              <textarea class="obs-input" id="bot-route-msg" style="background: #0F172A; color: white; border-color: #334155; min-height: 80px;">🛵 {nome}, seu pedido nº {numero} acabou de sair para entrega com nosso motoboy!
+Previsão: 15 a 20 minutos. Bom apetite! 😋</textarea>
+            </div>
+
+            <button class="btn-nimbo-primary" style="margin-top: 16px; width: 100%; justify-content: center;" onclick="saveBotSettings()">
+              💾 Salvar Mensagens do Robô
+            </button>
+          </div>
+
+          <!-- Lado Direito: Simulador Visual do WhatsApp -->
+          <div>
+            <div style="font-weight: 800; font-size: 15px; margin-bottom: 10px; color: #94A3B8;">
+              Pré-visualização do WhatsApp do Cliente:
+            </div>
+            <div class="whatsapp-sim-wrapper" style="margin: 0; box-shadow: var(--shadow-lg);">
+              <div class="wa-header">
+                <div class="wa-contact-box">
+                  <img src="https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=250&q=80" alt="B Lugar Legal" class="wa-avatar">
+                  <div>
+                    <div class="wa-name">B Lugar Legal • Oficial ✅</div>
+                    <div class="wa-status">online • Atendimento Inteligente 24h</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="wa-chat-body" id="wa-chat-container"></div>
+
+              <div class="wa-quick-actions">
+                <button class="wa-quick-btn" onclick="simulateQuickAction('oi')">💬 Simular "Boa noite"</button>
+                <button class="wa-quick-btn" onclick="simulateQuickAction('cardapio')">🍔 Pedir Cardápio</button>
+                <button class="wa-quick-btn" onclick="simulateQuickAction('status')">📍 Status Pedido #22</button>
+              </div>
+
+              <div class="wa-footer">
+                <input type="text" class="wa-input" id="wa-input-field" placeholder="Digite uma mensagem..." onkeydown="if(event.key === 'Enter') sendWhatsAppClientMessage()">
+                <button class="wa-send-btn" onclick="sendWhatsAppClientMessage()">➤</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- 4. SEÇÃO CONFIGURAÇÕES DA LOJA & CHAVE PIX -->
+      <section class="admin-section" id="sec-config">
+        <div class="form-card" style="max-width: 700px;">
+          <h3 style="font-size: 20px; font-weight: 800; margin-bottom: 8px;">Dados do Restaurante & Recebimento de PIX</h3>
+          <p style="font-size: 13px; color: #94A3B8; margin-bottom: 24px;">
+            Configure onde o dinheiro das vendas vai cair e as regras de entrega da sua loja.
+          </p>
+
+          <div class="form-group">
+            <label style="color: #CBD5E1; font-weight: 700;">Nome do Restaurante</label>
+            <input type="text" class="form-input" id="cfg-store-name" value="B Lugar Legal 🍔" style="background: #0F172A; color: white; border-color: #334155;">
+          </div>
+
+          <div class="form-group" style="margin-top: 14px;">
+            <label style="color: #CBD5E1; font-weight: 700;">Chave PIX do Restaurante (onde cai 100% do dinheiro das vendas)</label>
+            <input type="text" class="form-input" id="cfg-pix-key" value="blugarlegal@gmail.com" placeholder="CPF, CNPJ, Telefone ou E-mail" style="background: #0F172A; color: white; border-color: #334155; font-weight: 700; color: #25D366;">
+            <small style="color: #94A3B8; font-size: 11px; margin-top: 4px; display: block;">
+              Quando o cliente escolhe PIX no cardápio, o QR Code é gerado para essa chave e o dinheiro cai na hora na sua conta!
+            </small>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 14px;">
+            <div class="form-group">
+              <label style="color: #CBD5E1; font-weight: 700;">Taxa de Entrega Padrão (R$)</label>
+              <input type="number" step="0.50" class="form-input" id="cfg-delivery-fee" value="6.00" style="background: #0F172A; color: white; border-color: #334155;">
+            </div>
+            <div class="form-group">
+              <label style="color: #CBD5E1; font-weight: 700;">Tempo Estimado de Entrega</label>
+              <input type="text" class="form-input" id="cfg-eta" value="30-45 min" style="background: #0F172A; color: white; border-color: #334155;">
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-top: 14px;">
+            <label style="color: #CBD5E1; font-weight: 700;">WhatsApp do Restaurante</label>
+            <input type="text" class="form-input" id="cfg-whatsapp" value="(11) 98765-4321" style="background: #0F172A; color: white; border-color: #334155;">
+          </div>
+
+          <button class="btn-nimbo-primary" style="margin-top: 24px; padding: 14px 28px;" onclick="saveStoreSettings()">
+            💾 Salvar Configurações da Loja
+          </button>
+        </div>
+      </section>
+
+      <!-- 5. SEÇÃO RELATÓRIOS & MÉTRICAS -->
+      <section class="admin-section" id="sec-relatorios">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+          
+          <div class="form-card">
+            <h4 style="color: #94A3B8; font-size: 13px; text-transform: uppercase;">Divisão por Forma de Pagamento</h4>
+            <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 14px;">
+              <div>
+                <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 700;">
+                  <span>🟢 PIX Instantâneo</span>
+                  <span style="color: #25D366;">68% (R$ 1.010,00)</span>
+                </div>
+                <div style="height: 8px; background: #334155; border-radius: 4px; margin-top: 6px; overflow: hidden;">
+                  <div style="height: 100%; width: 68%; background: #25D366;"></div>
+                </div>
+              </div>
+
+              <div>
+                <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 700;">
+                  <span>💳 Cartão na Maquininha</span>
+                  <span style="color: #38BDF8;">24% (R$ 356,40)</span>
+                </div>
+                <div style="height: 8px; background: #334155; border-radius: 4px; margin-top: 6px; overflow: hidden;">
+                  <div style="height: 100%; width: 24%; background: #38BDF8;"></div>
+                </div>
+              </div>
+
+              <div>
+                <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 700;">
+                  <span>💵 Dinheiro</span>
+                  <span style="color: #FBBF24;">8% (R$ 118,60)</span>
+                </div>
+                <div style="height: 8px; background: #334155; border-radius: 4px; margin-top: 6px; overflow: hidden;">
+                  <div style="height: 100%; width: 8%; background: #FBBF24;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-card">
+            <h4 style="color: #94A3B8; font-size: 13px; text-transform: uppercase;">Top Produtos Mais Vendidos</h4>
+            <div style="margin-top: 16px; display: flex; flex-direction: column; gap: 12px; font-size: 13.5px;">
+              <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #334155; padding-bottom: 8px;">
+                <span>🥇 1. X Burger Especial</span>
+                <strong>42 pedidos</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #334155; padding-bottom: 8px;">
+                <span>🥈 2. Smash Bacon Duplo</span>
+                <strong>28 pedidos</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #334155; padding-bottom: 8px;">
+                <span>🥉 3. Batata Frita Rústica</span>
+                <strong>35 pedidos</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; padding-top: 4px;">
+                <span>🥤 4. Coca-Cola Zero 350ml</span>
+                <strong>51 pedidos</strong>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    // Navegação entre abas do Painel
+    function switchAdminSection(sectionId, btnElement) {
+      document.querySelectorAll('.admin-section').forEach(sec => sec.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
+      
+      const targetSec = document.getElementById(`sec-${sectionId}`);
+      if (targetSec) targetSec.classList.add('active');
+      if (btnElement) btnElement.classList.add('active');
+
+      const titleMap = {
+        'kds': '🍳 Gestor de Pedidos da Cozinha (KDS)',
+        'cardapio': '🍔 Gerenciamento do Cardápio & Estoque',
+        'whatsapp': '🤖 Robô de WhatsApp Inteligente',
+        'config': '⚙️ Dados da Loja & Recebimento de PIX',
+        'relatorios': '📊 Relatórios de Vendas & Faturamento'
+      };
+      document.getElementById('section-title').textContent = titleMap[sectionId] || 'Painel de Gestão';
+    }
+
+    // Salvar configurações
+    function saveStoreSettings() {
+      const name = document.getElementById('cfg-store-name').value;
+      const pix = document.getElementById('cfg-pix-key').value;
+      const fee = parseFloat(document.getElementById('cfg-delivery-fee').value);
+      const eta = document.getElementById('cfg-eta').value;
+
+      STORE_DATA.name = name;
+      STORE_DATA.pixKey = pix;
+      STORE_DATA.deliveryFee = fee;
+      STORE_DATA.eta = eta;
+      localStorage.setItem('anotazap_store_data', JSON.stringify(STORE_DATA));
+
+      sounds.playSuccess();
+      alert('✅ Dados da loja e chave PIX atualizados com sucesso!');
+    }
+
+    function saveBotSettings() {
+      sounds.playSuccess();
+      alert('✅ Mensagens do robô de WhatsApp salvas com sucesso!');
+    }
+
+    function openNewProductPrompt() {
+      const name = prompt("Nome do novo lanche/produto:");
+      if (!name) return;
+      const price = parseFloat(prompt("Preço do produto (Ex: 22.00):") || "20");
+      
+      PRODUCTS.push({
+        id: Date.now(),
+        category: "lanches",
+        name: name,
+        description: "Novo produto adicionado pelo restaurante.",
+        price: price,
+        image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=500&q=80",
+        isPopular: true,
+        addons: []
+      });
+
+      localStorage.setItem('anotazap_products', JSON.stringify(PRODUCTS));
+      renderAdminProductsTable();
+      sounds.playSuccess();
+      alert(`🍔 ${name} adicionado ao cardápio com sucesso!`);
+    }
+
+    // Renderiza tabela de gestão de produtos no painel
+    function renderAdminProductsTable() {
+      const tbody = document.getElementById('admin-products-table-body');
+      if (!tbody) return;
+      tbody.innerHTML = "";
+
+      PRODUCTS.forEach(p => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>
+            <div style="display:flex; align-items:center; gap:12px;">
+              <img src="${p.image}" style="width:42px; height:42px; border-radius:8px; object-fit:cover;">
+              <div>
+                <strong style="color:white;">${p.name}</strong>
+                <div style="font-size:11px; color:#94A3B8;">${p.description.substring(0, 45)}...</div>
+              </div>
+            </div>
+          </td>
+          <td><span style="background:#334155; padding:3px 8px; border-radius:4px; font-size:11px; text-transform:uppercase;">${p.category}</span></td>
+          <td><strong style="color:#FF5A1F;">R$ ${p.price.toFixed(2).replace('.', ',')}</strong></td>
+          <td>
+            <label class="status-switch">
+              <input type="checkbox" checked onchange="toggleProductAvailability(${p.id}, this)">
+              <span class="switch-slider"></span>
+            </label>
+            <span style="font-size:11px; color:#10B981; margin-left:8px; font-weight:700;">Disponível</span>
+          </td>
+          <td>
+            <button onclick="editProductPrice(${p.id})" style="background:#334155; color:white; border:none; padding:6px 10px; border-radius:6px; cursor:pointer; font-size:11px; font-weight:700;">
+              ✏️ Mudar Preço
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function toggleProductAvailability(id, checkbox) {
+      sounds.playWhatsApp();
+      const statusSpan = checkbox.parentElement.nextElementSibling;
+      if (checkbox.checked) {
+        statusSpan.textContent = "Disponível";
+        statusSpan.style.color = "#10B981";
+      } else {
+        statusSpan.textContent = "Esgotado";
+        statusSpan.style.color = "#EF4444";
+      }
+    }
+
+    function editProductPrice(id) {
+      const p = PRODUCTS.find(prod => prod.id === id);
+      if (!p) return;
+      const newPrice = prompt(`Novo preço para "${p.name}":`, p.price.toFixed(2));
+      if (newPrice && !isNaN(parseFloat(newPrice))) {
+        p.price = parseFloat(newPrice);
+        localStorage.setItem('anotazap_products', JSON.stringify(PRODUCTS));
+        renderAdminProductsTable();
+        sounds.playSuccess();
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderAdminProductsTable();
+    });
+  </script>
+</body>
+</html>

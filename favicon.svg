@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <rect width="32" height="32" rx="8" fill="#0B1220"/>
+  <!-- Nimbo Minimalist Cloud + Geometric N Icon -->
+  <path d="M10 22C7.79086 22 6 20.2091 6 18C6 15.9818 7.49557 14.3129 9.44498 14.0454C9.89736 10.6358 12.8021 8 16.3636 8C19.4674 8 22.0674 10.0076 22.9511 12.7936C24.7118 13.2081 26 14.7797 26 16.6667C26 18.8758 24.2091 20.6667 22 20.6667H21" stroke="#B8F36B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Geometric N integrated contour -->
+  <path d="M12 21V13.5L18.5 21V13.5" stroke="#B8F36B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

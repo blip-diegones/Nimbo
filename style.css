@@ -1683,3 +1683,101 @@ body {
   color: var(--nimbo-lime);
   font-weight: 800;
 }
+
+/* ==========================================================================
+   NIMBO APP SWITCHER (Barra Flutuante para Navegação Fácil)
+   ========================================================================== */
+.nimbo-switcher-bar {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 99999;
+  background: rgba(11, 18, 32, 0.94);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(184, 243, 107, 0.4);
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.5), 0 0 20px rgba(184, 243, 107, 0.2);
+  padding: 6px 10px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 95vw;
+}
+
+.nimbo-switcher-brand {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 12px 4px 6px;
+  border-right: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 11.5px;
+  font-weight: 800;
+  color: #FFFFFF;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.nimbo-switcher-brand svg {
+  width: 18px;
+  height: 18px;
+}
+
+.nimbo-switcher-links {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.nimbo-switch-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  color: #94A3B8;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+}
+
+.nimbo-switch-btn:hover {
+  color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.nimbo-switch-btn.active {
+  background: var(--nimbo-lime);
+  color: var(--nimbo-navy) !important;
+  font-weight: 800;
+  box-shadow: 0 2px 10px rgba(184, 243, 107, 0.4);
+}
+
+.nimbo-switch-btn.highlight {
+  border: 1px solid rgba(184, 243, 107, 0.4);
+  color: var(--nimbo-lime);
+}
+
+.nimbo-switch-btn.highlight:hover {
+  background: rgba(184, 243, 107, 0.15);
+  color: #FFFFFF;
+}
+
+@media (max-width: 640px) {
+  .nimbo-switcher-bar {
+    bottom: 12px;
+    padding: 5px 8px;
+    gap: 4px;
+  }
+  .nimbo-switcher-brand {
+    display: none;
+  }
+  .nimbo-switch-btn {
+    font-size: 11px;
+    padding: 6px 10px;
+  }
+}
+

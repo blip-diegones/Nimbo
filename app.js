@@ -213,27 +213,42 @@ let modalQty = 1;
 let deliveryType = "delivery"; // delivery | retirada | mesa
 let paymentMethod = "pix"; // pix | dinheiro | cartao
 
-// Carrega pedidos salvos (suporta transição de chaves)
-let orders = JSON.parse(localStorage.getItem('nimbo_orders') || localStorage.getItem('anotazap_orders')) || [
-  {
-    id: 21,
-    time: "22:45",
-    customer: "Fernanda Costa",
-    phone: "(11) 97123-4567",
-    type: "delivery",
-    address: "Av. Paulista, 1000 - Apto 82, Bela Vista",
-    items: [
-      { name: "Smash Bacon Duplo", qty: 1, price: 26.00, addons: ["Fatias de Bacon Crocante"] },
-      { name: "Coca-Cola Zero 350ml", qty: 1, price: 6.00, addons: [] }
-    ],
-    deliveryFee: 6.00,
-    total: 36.50,
-    paymentMethod: "pix",
-    status: "done" // new | prep | route | done
-  }
-];
+// Carrega pedidos salvos com proteção contra JSON corrompido
+let orders = [];
+try {
+  const savedOrders = localStorage.getItem('nimbo_orders') || localStorage.getItem('anotazap_orders');
+  orders = savedOrders ? JSON.parse(savedOrders) : [];
+} catch (e) {
+  console.warn("Nimbo: reset orders due to parse error", e);
+  orders = [];
+}
+if (!Array.isArray(orders) || orders.length === 0) {
+  orders = [
+    {
+      id: 21,
+      time: "22:45",
+      customer: "Fernanda Costa",
+      phone: "(11) 97123-4567",
+      type: "delivery",
+      address: "Av. Paulista, 1000 - Apto 82, Bela Vista",
+      items: [
+        { name: "Smash Bacon Duplo", quantity: 1, basePrice: 26.00, addons: ["Fatias de Bacon Crocante"] },
+        { name: "Coca-Cola Zero 350ml", quantity: 1, basePrice: 6.00, addons: [] }
+      ],
+      deliveryFee: 6.00,
+      total: 36.50,
+      paymentMethod: "pix",
+      status: "done"
+    }
+  ];
+}
 
-let nextOrderNumber = parseInt(localStorage.getItem('anotazap_next_num') || "22");
+let nextOrderNumber = 22;
+try {
+  nextOrderNumber = parseInt(localStorage.getItem('anotazap_next_num') || "22", 10);
+} catch(e) {
+  nextOrderNumber = 22;
+}
 
 // Histórico de mensagens do WhatsApp simulado
 let whatsappMessages = [
@@ -256,15 +271,22 @@ let whatsappMessages = [
 ];
 
 // --- 4. INICIALIZAÇÃO & ROUTING DE TELAS ---
-document.addEventListener('DOMContentLoaded', () => {
-  initDockNavigation();
-  renderProducts();
-  renderKdsBoard();
-  renderWhatsAppChat();
-  updateCartBar();
-  initLandingCalculator();
-  initSoundToggle();
-});
+function initApp() {
+  try { initDockNavigation(); } catch (e) { console.warn("Dock nav:", e); }
+  try { renderProducts(); } catch (e) { console.error("Render products:", e); }
+  try { renderKdsBoard(); } catch (e) { console.warn("KDS Board:", e); }
+  try { renderWhatsAppChat(); } catch (e) { console.warn("WA Chat:", e); }
+  try { updateCartBar(); } catch (e) { console.warn("Cart bar:", e); }
+  try { initLandingCalculator(); } catch (e) { console.warn("Calculator:", e); }
+  try { initSoundToggle(); } catch (e) { console.warn("Sound toggle:", e); }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initApp);
+} else {
+  // Se o script carregou após o DOM estar pronto
+  initApp();
+}
 
 // Navegação entre os 4 Módulos pelo Dock
 function initDockNavigation() {

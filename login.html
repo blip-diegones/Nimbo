@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Entrar ou Criar Conta | Nimbo — Cardápio Digital para Restaurantes</title>
+  <meta name="description" content="Acesse o painel do seu restaurante na Nimbo ou crie sua conta gratuitamente em menos de 1 minuto.">
+  
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .auth-page {
+      min-height: 100vh;
+      background: var(--nimbo-navy);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+      color: var(--nimbo-white);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .auth-glow-bg {
+      position: absolute;
+      width: 480px;
+      height: 480px;
+      background: radial-gradient(circle, rgba(184, 243, 107, 0.08) 0%, rgba(11, 18, 32, 0) 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .auth-container {
+      width: 100%;
+      max-width: 440px;
+      background: var(--nimbo-navy-surface);
+      border: 1px solid var(--nimbo-border);
+      border-radius: var(--radius-xl);
+      padding: 36px 32px;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      z-index: 1;
+    }
+
+    .auth-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .auth-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+      text-decoration: none;
+    }
+
+    .auth-title {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--nimbo-white);
+      letter-spacing: -0.5px;
+    }
+
+    .auth-subtitle {
+      font-size: 13.5px;
+      color: var(--nimbo-text-secondary);
+      margin-top: 6px;
+    }
+
+    .auth-tabs {
+      display: flex;
+      background: var(--nimbo-navy-card);
+      border: 1px solid var(--nimbo-border);
+      border-radius: var(--radius-md);
+      padding: 4px;
+      margin-bottom: 24px;
+    }
+
+    .auth-tab-btn {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--nimbo-text-secondary);
+      font-size: 13.5px;
+      font-weight: 700;
+      padding: 9px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .auth-tab-btn.active {
+      background: var(--nimbo-lime);
+      color: var(--nimbo-navy);
+      box-shadow: 0 2px 8px var(--nimbo-lime-glow);
+    }
+
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .auth-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .auth-label {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #CBD5E1;
+    }
+
+    .auth-input {
+      background: #070D18;
+      border: 1px solid var(--nimbo-border);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      color: var(--nimbo-white);
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .auth-input:focus {
+      border-color: var(--nimbo-lime);
+      box-shadow: 0 0 0 3px rgba(184, 243, 107, 0.15);
+    }
+
+    .auth-alert {
+      padding: 12px 14px;
+      border-radius: var(--radius-md);
+      font-size: 12.5px;
+      font-weight: 600;
+      display: none;
+      animation: fadeIn 0.2s ease-out;
+    }
+
+    .auth-alert.error {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid #EF4444;
+      color: #FCA5A5;
+      display: block;
+    }
+
+    .auth-alert.success {
+      background: rgba(184, 243, 107, 0.15);
+      border: 1px solid var(--nimbo-lime);
+      color: #D9F99D;
+      display: block;
+    }
+
+    .btn-auth-submit {
+      background: var(--nimbo-lime);
+      color: var(--nimbo-navy);
+      border: none;
+      border-radius: var(--radius-md);
+      padding: 14px;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 8px;
+      transition: all 0.2s;
+      box-shadow: 0 4px 14px var(--nimbo-lime-glow);
+    }
+
+    .btn-auth-submit:hover {
+      background: var(--nimbo-lime-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-auth-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .auth-footer {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 12.5px;
+      color: var(--nimbo-text-secondary);
+    }
+
+    .auth-link {
+      color: var(--nimbo-lime);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .auth-link:hover {
+      text-decoration: underline;
+    }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(11, 18, 32, 0.3);
+      border-top-color: var(--nimbo-navy);
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      display: none;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body class="auth-page">
+
+  <div class="auth-glow-bg"></div>
+
+  <div class="auth-container">
+    <!-- Header com Marca Nimbo Oficial -->
+    <div class="auth-header">
+      <a href="index.html" class="auth-logo">
+        <span class="nimbo-logo-icon">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+            <path d="M10 22C7.79086 22 6 20.2091 6 18C6 15.9818 7.49557 14.3129 9.44498 14.0454C9.89736 10.6358 12.8021 8 16.3636 8C19.4674 8 22.0674 10.0076 22.9511 12.7936C24.7118 13.2081 26 14.7797 26 16.6667C26 18.8758 24.2091 20.6667 22 20.6667H21" stroke="#B8F36B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12 21V13.5L18.5 21V13.5" stroke="#B8F36B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <span class="nimbo-logo-wordmark" style="font-size: 26px;">nimbo</span>
+      </a>
+      <h1 class="auth-title" id="auth-title">Acesse o seu Painel</h1>
+      <p class="auth-subtitle" id="auth-subtitle">Entre para gerenciar seu restaurante e cardápio digital</p>
+    </div>
+
+    <!-- Abas Alternáveis: Entrar vs Criar Conta -->
+    <div class="auth-tabs">
+      <button class="auth-tab-btn active" id="tab-login" onclick="switchAuthMode('login')">Fazer Login</button>
+      <button class="auth-tab-btn" id="tab-register" onclick="switchAuthMode('register')">Criar Conta Grátis</button>
+    </div>
+
+    <!-- Mensagens de Alerta (Erro / Sucesso) -->
+    <div id="auth-alert" class="auth-alert"></div>
+
+    <!-- Formulário Único Dinâmico -->
+    <form class="auth-form" id="auth-form" onsubmit="handleAuthSubmit(event)">
+      <!-- Nome (Apenas no Cadastro) -->
+      <div class="auth-field" id="field-name" style="display: none;">
+        <label class="auth-label" for="input-name">Seu Nome Completo</label>
+        <input type="text" class="auth-input" id="input-name" placeholder="Ex: Lucas Ferreira">
+      </div>
+
+      <!-- E-mail -->
+      <div class="auth-field">
+        <label class="auth-label" for="input-email">Seu E-mail</label>
+        <input type="email" class="auth-input" id="input-email" required placeholder="seu@email.com">
+      </div>
+
+      <!-- Senha -->
+      <div class="auth-field">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <label class="auth-label" for="input-password">Sua Senha</label>
+          <a href="#" class="auth-link" id="link-forgot" style="font-size: 11px;" onclick="handleForgotPassword(event)">Esqueceu a senha?</a>
+        </div>
+        <input type="password" class="auth-input" id="input-password" required minlength="6" placeholder="Mínimo de 6 caracteres">
+      </div>
+
+      <button type="submit" class="btn-auth-submit" id="btn-submit">
+        <div class="spinner" id="btn-spinner"></div>
+        <span id="btn-text">Entrar no Painel</span>
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      <span id="footer-text">Ainda não possui conta?</span>
+      <a href="#" class="auth-link" id="footer-link" onclick="toggleAuthMode(event)">Criar conta grátis agora</a>
+      <div style="margin-top: 16px; font-size: 11px; color: var(--nimbo-text-muted);">
+        Cardápio digital 100% gratuito e permanente. Cancele quando quiser.
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPTS DE AUTENTICAÇÃO NIMBO (COMPATÍVEL COM FILE:// E HTTP://) -->
+  <script src="plans_config.js"></script>
+  <script src="nimbo-core.js"></script>
+  <script>
+    const NimboAuth = window.NimboAuth;
+    const NimboRestaurant = window.NimboRestaurant;
+
+    let currentMode = 'login'; // 'login' | 'register'
+
+    // Verifica se já está logado
+    const user = NimboAuth ? NimboAuth.getCurrentUser() : null;
+    if (user) {
+      window.location.href = 'painel.html';
+    }
+
+    // Leitura de query params (ex: ?mode=register)
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('mode') === 'register') {
+      switchAuthMode('register');
+    }
+
+    window.switchAuthMode = function(mode) {
+      currentMode = mode;
+      const title = document.getElementById('auth-title');
+      const subtitle = document.getElementById('auth-subtitle');
+      const tabLogin = document.getElementById('tab-login');
+      const tabRegister = document.getElementById('tab-register');
+      const fieldName = document.getElementById('field-name');
+      const inputName = document.getElementById('input-name');
+      const btnText = document.getElementById('btn-text');
+      const linkForgot = document.getElementById('link-forgot');
+      const footerText = document.getElementById('footer-text');
+      const footerLink = document.getElementById('footer-link');
+      const alertBox = document.getElementById('auth-alert');
+
+      alertBox.className = 'auth-alert';
+      alertBox.style.display = 'none';
+
+      if (mode === 'register') {
+        title.textContent = 'Crie sua Conta Grátis';
+        subtitle.textContent = 'Comece a publicar o cardápio do seu restaurante hoje';
+        tabLogin.classList.remove('active');
+        tabRegister.classList.add('active');
+        fieldName.style.display = 'flex';
+        inputName.required = true;
+        linkForgot.style.display = 'none';
+        btnText.textContent = 'Criar Minha Conta Grátis ➔';
+        footerText.textContent = 'Já possui cadastro?';
+        footerLink.textContent = 'Fazer login no painel';
+      } else {
+        title.textContent = 'Acesse o seu Painel';
+        subtitle.textContent = 'Entre para gerenciar seu restaurante e cardápio digital';
+        tabLogin.classList.add('active');
+        tabRegister.classList.remove('active');
+        fieldName.style.display = 'none';
+        inputName.required = false;
+        linkForgot.style.display = 'inline';
+        btnText.textContent = 'Entrar no Painel';
+        footerText.textContent = 'Ainda não possui conta?';
+        footerLink.textContent = 'Criar conta grátis agora';
+      }
+    };
+
+    window.toggleAuthMode = function(e) {
+      e.preventDefault();
+      switchAuthMode(currentMode === 'login' ? 'register' : 'login');
+    };
+
+    window.handleForgotPassword = async function(e) {
+      e.preventDefault();
+      const email = document.getElementById('input-email').value.trim();
+      const alertBox = document.getElementById('auth-alert');
+      if (!email) {
+        alertBox.className = 'auth-alert error';
+        alertBox.textContent = 'Digite seu e-mail no campo acima para recuperar a senha.';
+        return;
+      }
+      try {
+        const res = await NimboAuth.resetPassword(email);
+        alertBox.className = 'auth-alert success';
+        alertBox.textContent = res.message;
+      } catch (err) {
+        alertBox.className = 'auth-alert error';
+        alertBox.textContent = err.message;
+      }
+    };
+
+    window.handleAuthSubmit = async function(event) {
+      event.preventDefault();
+      const email = document.getElementById('input-email').value.trim();
+      const password = document.getElementById('input-password').value;
+      const name = document.getElementById('input-name').value.trim();
+      const alertBox = document.getElementById('auth-alert');
+      const btnSubmit = document.getElementById('btn-submit');
+      const spinner = document.getElementById('btn-spinner');
+      const btnText = document.getElementById('btn-text');
+
+      alertBox.className = 'auth-alert';
+      alertBox.style.display = 'none';
+      btnSubmit.disabled = true;
+      spinner.style.display = 'inline-block';
+      const originalText = btnText.textContent;
+      btnText.textContent = 'Aguarde...';
+
+      try {
+        if (currentMode === 'register') {
+          await NimboAuth.signUp(email, password, name);
+          alertBox.className = 'auth-alert success';
+          alertBox.textContent = 'Conta criada com sucesso! Redirecionando para o painel...';
+          setTimeout(() => {
+            window.location.href = 'painel.html?onboarding=true';
+          }, 800);
+        } else {
+          await NimboAuth.signIn(email, password);
+          alertBox.className = 'auth-alert success';
+          alertBox.textContent = 'Login efetuado com sucesso! Entrando no painel...';
+          setTimeout(() => {
+            window.location.href = 'painel.html';
+          }, 600);
+        }
+      } catch (err) {
+        alertBox.className = 'auth-alert error';
+        alertBox.textContent = err.message || 'Ocorreu um erro. Tente novamente.';
+        btnSubmit.disabled = false;
+        spinner.style.display = 'none';
+        btnText.textContent = originalText;
+      }
+    };
+  </script>
+  <script>
+    // Barra de navegação interna: só aparece para o dono (abra qualquer página com ?dev=1)
+    try {
+      if (location.search.indexOf('dev=1') > -1) localStorage.setItem('nimboDev', '1');
+      if (location.search.indexOf('dev=0') > -1) localStorage.removeItem('nimboDev');
+      if (localStorage.getItem('nimboDev') === '1') document.body.classList.add('nimbo-dev');
+    } catch (e) {}
+  </script>
+</body>
+</html>

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Nimbo — Plataforma de Cardápio Digital e Gestão para Delivery</title>
-  <meta name="description" content="A Nimbo é a plataforma moderna para restaurantes e deliveries: cardápio digital, gestão de pedidos, KDS de cozinha e notificações no WhatsApp por R$ 69,90/mês.">
+  <meta name="description" content="A Nimbo é a plataforma moderna para restaurantes e deliveries: cardápio digital, gestão de pedidos, KDS de cozinha e notificações no WhatsApp a partir de R$ 49,90/mês.">
   
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -127,13 +127,13 @@
         <span class="nimbo-logo-wordmark">nimbo</span>
       </a>
 
-      <!-- Ação Principal Direta (Leva ao Checkout / Preço) -->
-      <div style="display: flex; align-items: center; gap: 16px;">
-        <span style="font-size: 13px; color: var(--nimbo-text-secondary); font-weight: 600;" class="hide-mobile">
-          R$ 69,90/mês • 0% de comissão
-        </span>
-        <a href="#planos" class="btn-nimbo-primary" style="padding: 10px 22px; font-size: 13.5px;">
-          Começar Agora ➔
+      <!-- Ações Diretas -->
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <a href="login.html" class="btn-nimbo-secondary" style="padding: 9px 18px; font-size: 13px;">
+          Fazer Login
+        </a>
+        <a href="login.html?mode=register" class="btn-nimbo-primary" style="padding: 9px 20px; font-size: 13px;">
+          Criar Conta Grátis ➔
         </a>
       </div>
 
@@ -148,26 +148,26 @@
     </div>
 
     <h1>
-      Seu cardápio digital e gestão de pedidos. <span class="gradient">Tudo flui melhor.</span>
+      Seu cardápio digital gratuito e gestão de pedidos. <span class="gradient">Tudo flui melhor.</span>
     </h1>
 
     <p class="subtitle">
-      A Nimbo reúne cardápio interativo para celular, painel de cozinha em tempo real (KDS), notificações automáticas no WhatsApp e pagamentos via PIX sem taxas por venda.
+      A Nimbo reúne cardápio interativo permanente, painel de cozinha em tempo real (KDS), notificações no WhatsApp e pagamentos via PIX direto na sua conta bancária sem comissões por venda.
     </p>
 
     <div class="lp-cta-row">
-      <a href="#planos" class="btn-nimbo-primary" style="font-size: 16px; padding: 16px 36px;">
-        Quero Assinar por R$ 69,90/mês ➔
+      <a href="login.html?mode=register" class="btn-nimbo-primary" style="font-size: 15.5px; padding: 16px 36px;">
+        Criar Meu Cardápio Grátis ➔
       </a>
-      <a href="#demonstracao" class="btn-nimbo-secondary" style="font-size: 15px; padding: 16px 28px;">
-        Ver o Sistema por Dentro ↓
+      <a href="#planos" class="btn-nimbo-secondary" style="font-size: 14.5px; padding: 16px 28px;">
+        Conhecer os Planos ↓
       </a>
     </div>
 
     <div style="margin-top: 24px; display: flex; align-items: center; justify-content: center; gap: 24px; font-size: 12.5px; color: var(--nimbo-text-secondary); flex-wrap: wrap;">
-      <span>🔒 Pagamento seguro via Kiwify</span>
-      <span>⚡ Sem contrato de fidelidade</span>
-      <span>🟢 PIX direto na sua conta</span>
+      <span>✨ Cardápio público 100% gratuito</span>
+      <span>⚡ Sem taxa por pedido</span>
+      <span>🟢 PIX direto na sua chave</span>
     </div>
   </section>
 
@@ -211,7 +211,7 @@
           <!-- Mockup do Celular com Cardápio -->
           <div style="background: white; border-radius: 32px; border: 8px solid #1E293B; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.6); color: #0F172A;">
             <div style="background: #0B1220; color: white; padding: 12px 16px; font-size: 12px; font-weight: 700; display: flex; justify-content: space-between;">
-              <span>B Lugar Legal 🍔</span>
+              <span>Restaurante Exemplo 🍔</span>
               <span style="color: var(--nimbo-lime); font-size: 10px;">● Aberto</span>
             </div>
             
@@ -241,8 +241,8 @@
               <!-- Mini Sacola / Checkout PIX -->
               <div style="background: #0B1220; color: white; border-radius: 12px; padding: 10px; font-size: 11px;">
                 <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-                  <span>Subtotal + Frete (R$ 6):</span>
-                  <strong>R$ 24,00</strong>
+                  <span>Subtotal + Frete (R$ 5):</span>
+                  <strong>R$ 23,00</strong>
                 </div>
                 <div style="background: rgba(184, 243, 107, 0.15); color: var(--nimbo-lime); padding: 4px 8px; border-radius: 6px; font-weight: 700; text-align: center; margin-top: 6px;">
                   ⚡ PIX Instantâneo Direto para Você
@@ -398,53 +398,105 @@
       <div class="calc-box">
         <div class="calc-box-title">Comissões em marketplaces convencionais (23% a 27%):</div>
         <div class="calc-box-val" id="calc-ifood-cost">R$ 6.210,00</div>
-        <small style="color: var(--nimbo-text-muted); font-size: 11px;">Estimativa com ticket médio de R$ 45,00</small>
+        <small style="color: var(--nimbo-text-muted); font-size: 11px;">Estimativa com ticket médio de R$ 45,00 e comissão de 23%</small>
       </div>
 
       <div class="calc-box win">
         <div class="calc-box-title">Retenção de lucro com a Nimbo:</div>
         <div class="calc-box-val" id="calc-our-economy">R$ 6.140,10 /mês</div>
-        <small style="color: var(--nimbo-lime); font-size: 11px;">Seu único investimento é a assinatura fixa de R$ 69,90</small>
+        <small style="color: var(--nimbo-lime); font-size: 11px;">Seu único investimento é a assinatura fixa de R$ 49,90 (Essencial)</small>
       </div>
     </div>
   </section>
 
-  <!-- PLANO & CHECKOUT OFICIAL KIWIFY -->
+  <!-- PLANO & CHECKOUT OFICIAL -->
   <section class="lp-pricing-section" id="planos">
-    <div style="text-align: center; margin-bottom: 30px;">
-      <h2 style="font-size: 30px; font-weight: 800; letter-spacing: -0.5px;">Plano Simples e Transparente</h2>
-      <p style="color: var(--nimbo-text-secondary); margin-top: 8px;">Sem fidelidade, sem taxas ocultas, cancele quando quiser.</p>
+    <div style="text-align: center; margin-bottom: 36px;">
+      <h2 style="font-size: 32px; font-weight: 800; letter-spacing: -0.5px;">Planos Transparentes e Sem Surpresas</h2>
+      <p style="color: var(--nimbo-text-secondary); margin-top: 8px; font-size: 15px;">
+        Publique seu cardápio gratuitamente e ative os pedidos quando seu restaurante estiver pronto.
+      </p>
     </div>
 
-    <div class="pricing-cards-grid">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; max-width: 1040px; margin: 0 auto;">
       
-      <div class="price-card featured" style="max-width: 520px; margin: 0 auto; grid-column: 1 / -1;">
-        <div class="featured-tag">PLANO COMPLETO • ACESSO IMEDIATO</div>
-        <h3 class="plan-name" style="color: var(--nimbo-lime); font-size: 22px;">Nimbo para Restaurantes</h3>
-        <div class="plan-price-num">R$ 69,90 <span>/ mês</span></div>
-        <p style="font-size: 13.5px; color: var(--nimbo-text-secondary);">
-          Tudo o que seu estabelecimento precisa para operar com fluidez no digital.
-        </p>
-        
-        <ul class="plan-features-list">
-          <li><span class="check">✓</span> <strong>0% de comissão</strong> sobre os pedidos realizados</li>
-          <li><span class="check">✓</span> <strong>PIX direto na sua conta</strong> bancária instantâneo</li>
-          <li><span class="check">✓</span> Cardápio digital personalizado para celulares</li>
-          <li><span class="check">✓</span> Painel de cozinha (KDS) em tempo real com alertas sonoros</li>
-          <li><span class="check">✓</span> Notificação automática para o cliente no WhatsApp</li>
-          <li><span class="check">✓</span> Comanda pronta para impressão térmica de 80mm</li>
-          <li><span class="check">✓</span> Pedidos e faturamento ilimitados</li>
-          <li><span class="check">✓</span> Controle rápido de itens esgotados no dia</li>
-        </ul>
-
-        <!-- BOTÃO OFICIAL DE ASSINATURA -->
-        <a href="https://kiwify.com.br" target="_blank" class="btn-nimbo-primary" style="width: 100%; justify-content: center; font-size: 17px; padding: 18px 24px;" onclick="alert('Redirecionando para o checkout oficial da Nimbo na Kiwify!')">
-          Assinar Agora por R$ 69,90/mês ➔
+      <!-- PLANO 1: NIMBO GRÁTIS -->
+      <div class="price-card" style="background: var(--nimbo-navy-surface); border: 1px solid var(--nimbo-border); border-radius: var(--radius-xl); padding: 32px 24px; display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <h3 style="font-size: 20px; font-weight: 800; color: white;">Nimbo Grátis</h3>
+            <span class="plan-badge free">Gratuito</span>
+          </div>
+          <p style="font-size: 13px; color: var(--nimbo-text-secondary);">O ponto de partida para colocar seu restaurante na internet.</p>
+          <div style="font-size: 36px; font-weight: 900; color: #CBD5E1; margin: 16px 0;">
+            R$ 0 <small style="font-size: 14px; font-weight: 500; color: #94A3B8;">/mês</small>
+          </div>
+          <ul class="plan-features-list">
+            <li><span class="check">✓</span> Cardápio digital com URL permanente</li>
+            <li><span class="check">✓</span> Categorias e produtos ilimitados</li>
+            <li><span class="check">✓</span> Fotos, descrições e preços nos itens</li>
+            <li><span class="check">✓</span> Horários de funcionamento semanais</li>
+            <li><span class="check">✓</span> Atualização e edição a qualquer momento</li>
+            <li class="disabled"><span style="color: #64748B;">✕</span> Recebimento de pedidos pelo sistema</li>
+          </ul>
+        </div>
+        <a href="login.html?mode=register" class="btn-nimbo-secondary" style="width: 100%; justify-content: center; padding: 14px; margin-top: 20px; font-size: 14px;">
+          Começar Grátis Agora
         </a>
+      </div>
 
-        <p style="text-align: center; font-size: 11.5px; color: var(--nimbo-text-muted); margin-top: 14px;">
-          🔒 Pagamento 100% seguro processado via Kiwify • Garantia incondicional de 7 dias
-        </p>
+      <!-- PLANO 2: NIMBO ESSENCIAL (DESTAQUE) -->
+      <div class="price-card featured" style="background: var(--nimbo-navy-surface); border: 2px solid var(--nimbo-lime); border-radius: var(--radius-xl); padding: 32px 24px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 0 30px var(--nimbo-lime-glow); position: relative;">
+        <div style="position: absolute; top: -13px; left: 50%; transform: translateX(-50%); background: var(--nimbo-lime); color: var(--nimbo-navy); font-size: 11px; font-weight: 800; padding: 3px 14px; border-radius: var(--radius-full);">
+          MAIS ESCOLHIDO
+        </div>
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <h3 style="font-size: 20px; font-weight: 800; color: var(--nimbo-lime);">Nimbo Essencial</h3>
+            <span class="plan-badge essential">Pedidos Ativos</span>
+          </div>
+          <p style="font-size: 13px; color: var(--nimbo-text-secondary);">Para restaurantes que querem vender online e organizar a cozinha.</p>
+          <div style="font-size: 36px; font-weight: 900; color: var(--nimbo-lime); margin: 16px 0;">
+            R$ 49,90 <small style="font-size: 14px; font-weight: 500; color: #94A3B8;">/mês</small>
+          </div>
+          <ul class="plan-features-list">
+            <li><span class="check">✓</span> <strong>Todos os recursos do plano Grátis</strong></li>
+            <li><span class="check">✓</span> <strong>Ativação do recebimento de pedidos</strong></li>
+            <li><span class="check">✓</span> Painel Gestor de Cozinha (KDS) em tempo real</li>
+            <li><span class="check">✓</span> Notificações sonoras para novos pedidos</li>
+            <li><span class="check">✓</span> Impressão de comanda térmica para produção</li>
+            <li><span class="check">✓</span> <strong>0% de comissão</strong> sobre as suas vendas</li>
+            <li><span class="check">✓</span> PIX instantâneo direto na sua chave</li>
+          </ul>
+        </div>
+        <a href="login.html?mode=register&plan=essential" data-plan="essential" class="btn-nimbo-primary" style="width: 100%; justify-content: center; padding: 14px; margin-top: 20px; font-size: 14px;">
+          Contratar Essencial ➔
+        </a>
+      </div>
+
+      <!-- PLANO 3: NIMBO PRO -->
+      <div class="price-card" style="background: var(--nimbo-navy-surface); border: 1px solid var(--nimbo-border); border-radius: var(--radius-xl); padding: 32px 24px; display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <h3 style="font-size: 20px; font-weight: 800; color: #38BDF8;">Nimbo Pro</h3>
+            <span class="plan-badge pro">Automação</span>
+          </div>
+          <p style="font-size: 13px; color: var(--nimbo-text-secondary);">Automação completa no WhatsApp e métricas de faturamento.</p>
+          <div style="font-size: 36px; font-weight: 900; color: #38BDF8; margin: 16px 0;">
+            R$ 89,90 <small style="font-size: 14px; font-weight: 500; color: #94A3B8;">/mês</small>
+          </div>
+          <ul class="plan-features-list">
+            <li><span class="check">✓</span> <strong>Todos os recursos do plano Essencial</strong></li>
+            <li><span class="check">✓</span> <strong>Robô de atendimento automático no WhatsApp</strong></li>
+            <li><span class="check">✓</span> Notificações de status do pedido no WhatsApp</li>
+            <li><span class="check">✓</span> Relatórios de faturamento e ticket médio</li>
+            <li><span class="check">✓</span> Análise dos pratos mais vendidos</li>
+            <li><span class="check">✓</span> Suporte prioritário via WhatsApp</li>
+          </ul>
+        </div>
+        <a href="login.html?mode=register&plan=pro" data-plan="pro" class="btn-nimbo-secondary" style="width: 100%; justify-content: center; padding: 14px; margin-top: 20px; font-size: 14px; border-color: rgba(56, 189, 248, 0.4); color: #38BDF8;">
+          Contratar Nimbo Pro ➔
+        </a>
       </div>
 
     </div>
@@ -459,7 +511,7 @@
     <div class="faq-grid">
       <div class="faq-card">
         <div class="faq-q">A Nimbo cobra comissão por pedido?</div>
-        <div class="faq-a">Não. Diferente dos aplicativos tradicionais que cobram até 27%, a Nimbo cobra apenas a mensalidade fixa de R$ 69,90. Todo o dinheiro das vendas é 100% seu.</div>
+        <div class="faq-a">Não. Diferente dos aplicativos tradicionais que cobram até 27%, a Nimbo cobra apenas a mensalidade fixa: R$ 49,90 (Essencial) ou R$ 89,90 (Pro). Todo o dinheiro das vendas é 100% seu.</div>
       </div>
 
       <div class="faq-card">
@@ -506,13 +558,42 @@
     <div class="nimbo-switcher-links">
       <a href="index.html" class="nimbo-switch-btn" title="Ir para o Cardápio do Cliente">📱 Cardápio</a>
       <a href="painel.html" class="nimbo-switch-btn" title="Ir para o Painel do Restaurante & KDS">🍳 Painel Cozinha</a>
-      <a href="vender.html" class="nimbo-switch-btn active" title="Você está na Página de Vendas Kiwify">🚀 Página de Vendas</a>
+      <a href="vender.html" class="nimbo-switch-btn active" title="Você está na Página de Vendas">🚀 Página de Vendas</a>
     </div>
   </nav>
 
-  <script src="app.js"></script>
   <script>
     // Alternador das Abas de Demonstração Integradas
+
+    // ===== CHECKOUT: cole aqui os links de pagamento (Kiwify) de cada plano =====
+    const CHECKOUT_URLS = {
+      essential: '',   // ex: 'https://pay.kiwify.com.br/XXXXXXX'
+      pro: ''          // ex: 'https://pay.kiwify.com.br/YYYYYYY'
+    };
+    document.querySelectorAll('a[data-plan]').forEach(function (a) {
+      a.addEventListener('click', function (e) {
+        const url = CHECKOUT_URLS[a.getAttribute('data-plan')];
+        if (url) { e.preventDefault(); window.location.href = url; }
+      });
+    });
+
+    // ===== CALCULADORA DE ECONOMIA (slider funcional) =====
+    (function () {
+      const slider = document.getElementById('lp-orders-slider');
+      if (!slider) return;
+      const TICKET = 45, COMISSAO = 0.23, MENSALIDADE = 49.90;
+      const brl = function (v) { return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); };
+      function update() {
+        const orders = parseInt(slider.value, 10);
+        const comissoes = orders * TICKET * COMISSAO;
+        document.getElementById('slider-orders-val').textContent = orders.toLocaleString('pt-BR') + ' pedidos/mês';
+        document.getElementById('calc-ifood-cost').textContent = brl(comissoes);
+        document.getElementById('calc-our-economy').textContent = brl(Math.max(0, comissoes - MENSALIDADE)) + ' /mês';
+      }
+      slider.addEventListener('input', update);
+      update();
+    })();
+
     function switchShowcase(viewId, btn) {
       document.querySelectorAll('.showcase-tab').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
@@ -531,6 +612,14 @@
       };
       document.getElementById('showcase-url-indicator').textContent = urlMap[viewId] || 'https://nimbo.app';
     }
+  </script>
+  <script>
+    // Barra de navegação interna: só aparece para o dono (abra qualquer página com ?dev=1)
+    try {
+      if (location.search.indexOf('dev=1') > -1) localStorage.setItem('nimboDev', '1');
+      if (location.search.indexOf('dev=0') > -1) localStorage.removeItem('nimboDev');
+      if (localStorage.getItem('nimboDev') === '1') document.body.classList.add('nimbo-dev');
+    } catch (e) {}
   </script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Painel do Restaurante | Nimbo</title>
+  <title>Painel do Restaurante | Nimbo — Gestão & Cardápio Digital</title>
   <meta name="description" content="Painel de controle do restaurante: gestor de pedidos KDS, gerenciamento de cardápio, configurações de PIX e robô de WhatsApp. Powered by Nimbo.">
   
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -13,7 +13,6 @@
   
   <link rel="stylesheet" href="style.css">
   <style>
-    /* Estilos exclusivos do Painel do Restaurante */
     .admin-layout {
       display: flex;
       min-height: 100vh;
@@ -22,7 +21,7 @@
     }
 
     .admin-sidebar {
-      width: 270px;
+      width: 280px;
       background: var(--nimbo-navy-surface);
       border-right: 1px solid var(--nimbo-border);
       padding: 24px 16px;
@@ -44,11 +43,18 @@
     }
 
     .admin-logo {
-      width: 40px;
-      height: 40px;
+      width: 42px;
+      height: 42px;
       border-radius: 10px;
       object-fit: cover;
+      background: #0B1220;
       border: 2px solid var(--nimbo-lime);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--nimbo-lime);
     }
 
     .admin-nav {
@@ -107,6 +113,7 @@
       display: flex;
       flex-direction: column;
       overflow-y: auto;
+      min-width: 0;
     }
 
     .admin-header {
@@ -130,7 +137,14 @@
       display: block;
     }
 
-    /* Tabela e Cards de Cardápio */
+    .form-card {
+      background: #1E293B;
+      border: 1px solid #334155;
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      margin-top: 20px;
+    }
+
     .menu-mgmt-table {
       width: 100%;
       border-collapse: collapse;
@@ -201,23 +215,127 @@
       transform: translateX(20px);
     }
 
-    .form-card {
-      background: #1E293B;
+    .user-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      background: var(--nimbo-navy-card);
+      border: 1px solid var(--nimbo-border);
+      border-radius: var(--radius-full);
+      font-size: 12px;
+      color: var(--nimbo-white);
+    }
+
+    .btn-logout {
+      background: transparent;
+      border: none;
+      color: #EF4444;
+      font-size: 12px;
+      cursor: pointer;
+      font-weight: 700;
+      margin-left: 8px;
+    }
+
+    .btn-logout:hover {
+      text-decoration: underline;
+    }
+
+    .category-pills-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+      margin-bottom: 16px;
+    }
+
+    .category-chip {
+      background: #0F172A;
       border: 1px solid #334155;
-      border-radius: var(--radius-lg);
-      padding: 24px;
-      margin-top: 20px;
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #CBD5E1;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .category-chip button {
+      background: transparent;
+      border: none;
+      color: #94A3B8;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .category-chip button:hover {
+      color: #EF4444;
     }
   </style>
 </head>
 <body>
 
-  <div class="admin-layout">
+  <!-- FLUXO GUIADO DE PRIMEIROS PASSOS (ONBOARDING QUANDO NÃO HÁ RESTAURANTE) -->
+  <div id="onboarding-view" style="display: none; padding: 40px 20px; min-height: 100vh; background: var(--nimbo-navy);">
+    <div class="onboarding-container">
+      <div style="text-align: center; margin-bottom: 24px;">
+        <div class="nimbo-brand" style="margin-bottom: 12px;">
+          <span class="nimbo-logo-icon">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+              <path d="M10 22C7.79086 22 6 20.2091 6 18C6 15.9818 7.49557 14.3129 9.44498 14.0454C9.89736 10.6358 12.8021 8 16.3636 8C19.4674 8 22.0674 10.0076 22.9511 12.7936C24.7118 13.2081 26 14.7797 26 16.6667C26 18.8758 24.2091 20.6667 22 20.6667H21" stroke="#B8F36B" stroke-width="2.5"/>
+              <path d="M12 21V13.5L18.5 21V13.5" stroke="#B8F36B" stroke-width="2.5"/>
+            </svg>
+          </span>
+          <span class="nimbo-logo-wordmark" style="font-size: 26px;">nimbo</span>
+        </div>
+        <h2 style="font-size: 24px; font-weight: 800; color: white;">Bem-vindo à Nimbo! 🚀</h2>
+        <p style="font-size: 14px; color: var(--nimbo-text-secondary); margin-top: 6px;">
+          Vamos configurar o seu restaurante em menos de 1 minuto para gerar seu cardápio digital gratuito.
+        </p>
+      </div>
+
+      <form id="onboarding-form" onsubmit="handleOnboardingSubmit(event)" style="display: flex; flex-direction: column; gap: 18px;">
+        <div class="form-group">
+          <label style="color: #CBD5E1; font-weight: 700; font-size: 13px;">Nome do seu Estabelecimento *</label>
+          <input type="text" class="form-input" id="onb-name" required placeholder="Ex: Pizzaria Forno Nobre" style="background: #070D18; color: white; border-color: var(--nimbo-border);">
+        </div>
+
+        <div class="form-group">
+          <label style="color: #CBD5E1; font-weight: 700; font-size: 13px;">Especialidade / Slogan</label>
+          <input type="text" class="form-input" id="onb-tagline" placeholder="Ex: Pizzas Artesanais, Calzones & Vinhos" style="background: #070D18; color: white; border-color: var(--nimbo-border);">
+        </div>
+
+        <div class="form-group">
+          <label style="color: #CBD5E1; font-weight: 700; font-size: 13px;">WhatsApp de Atendimento</label>
+          <input type="tel" class="form-input" id="onb-whatsapp" placeholder="(00) 00000-0000" style="background: #070D18; color: white; border-color: var(--nimbo-border);">
+        </div>
+
+        <div class="form-group">
+          <label style="color: #CBD5E1; font-weight: 700; font-size: 13px;">Breve descrição para seus clientes (opcional)</label>
+          <textarea class="obs-input" id="onb-desc" placeholder="Ex: Há 10 anos servindo as melhores massas da cidade com ingredientes selecionados." style="background: #070D18; color: white; border-color: var(--nimbo-border); min-height: 70px;"></textarea>
+        </div>
+
+        <div style="background: rgba(184, 243, 107, 0.08); border: 1px solid rgba(184, 243, 107, 0.2); border-radius: var(--radius-md); padding: 14px; font-size: 13px; color: #D9F99D; display: flex; gap: 10px; align-items: center;">
+          <span>✨</span>
+          <span>Seu cardápio digital terá uma URL pública permanente gratuita (ex: <strong>nimbo.app/seu-restaurante</strong>).</span>
+        </div>
+
+        <button type="submit" class="btn-nimbo-primary" style="padding: 16px; font-size: 15px; font-weight: 800; justify-content: center; margin-top: 8px;">
+          🚀 Criar Meu Restaurante e Ir para o Painel
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- LAYOUT PRINCIPAL DO PAINEL DO RESTAURANTE -->
+  <div class="admin-layout" id="admin-view" style="display: none;">
     
-    <!-- SIDEBAR DE NAVEGAÇÃO DO RESTAURANTE -->
+    <!-- SIDEBAR DE NAVEGAÇÃO -->
     <aside class="admin-sidebar">
       <div>
-        <!-- Marca Oficial Nimbo -->
+        <!-- Topo da Sidebar com Marca Nimbo -->
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid var(--nimbo-border);">
           <div class="nimbo-brand">
             <span class="nimbo-logo-icon">
@@ -228,49 +346,67 @@
             </span>
             <span class="nimbo-logo-wordmark">nimbo</span>
           </div>
-          <span style="font-size: 10px; font-weight: 800; color: var(--nimbo-lime); background: rgba(184, 243, 107, 0.1); padding: 2px 8px; border-radius: var(--radius-full); border: 1px solid rgba(184, 243, 107, 0.25);">
-            PAINEL
-          </span>
+          <span class="plan-badge free" id="sidebar-plan-badge">GRÁTIS</span>
         </div>
 
-        <!-- Identidade do Restaurante Assinante -->
+        <!-- Identidade do Restaurante Ativo -->
         <div class="admin-brand">
-          <img src="https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=250&q=80" alt="B Lugar Legal" class="admin-logo">
-          <div>
-            <div style="font-weight: 800; font-size: 15px; color: var(--nimbo-white);">B Lugar Legal 🍔</div>
-            <div style="font-size: 11px; color: var(--nimbo-lime); font-weight: 700;">● Loja Aberta</div>
+          <div class="admin-logo" id="sidebar-rest-avatar">🍽️</div>
+          <div style="overflow: hidden;">
+            <div style="font-weight: 800; font-size: 14px; color: var(--nimbo-white); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="sidebar-rest-name">Meu Restaurante</div>
+            <div style="font-size: 11px; color: var(--nimbo-lime); font-weight: 700;" id="sidebar-rest-status">● Cardápio Ativo</div>
           </div>
         </div>
 
+        <!-- Links de Navegação -->
         <nav class="admin-nav">
-          <button class="nav-item active" onclick="switchAdminSection('kds', this)">
-            <span>🍳</span> Gestor de Cozinha (KDS)
-            <span class="badge" id="sidebar-order-badge">1</span>
-          </button>
-          
-          <button class="nav-item" onclick="switchAdminSection('cardapio', this)">
-            <span>🍔</span> Cardápio & Estoque
-          </button>
-          
-          <button class="nav-item" onclick="switchAdminSection('whatsapp', this)">
-            <span>🤖</span> Robô de WhatsApp
-          </button>
-          
-          <button class="nav-item" onclick="switchAdminSection('config', this)">
-            <span>⚙️</span> Dados da Loja & PIX
+          <button class="nav-item active" id="nav-btn-dashboard" onclick="switchAdminSection('dashboard', this)">
+            <span>🏠</span> Início / Dashboard
           </button>
 
-          <button class="nav-item" onclick="switchAdminSection('relatorios', this)">
+          <button class="nav-item" id="nav-btn-personalizar" onclick="switchAdminSection('personalizar', this)">
+            <span>🏪</span> Personalizar Loja
+          </button>
+
+          <button class="nav-item" id="nav-btn-preview" onclick="switchAdminSection('preview', this)">
+            <span>📱</span> Ver Cardápio Ao Vivo
+            <span class="badge" style="background: rgba(184, 243, 107, 0.15); color: var(--nimbo-lime);">Preview</span>
+          </button>
+          
+          <button class="nav-item" id="nav-btn-cardapio" onclick="switchAdminSection('cardapio', this)">
+            <span>🍔</span> Cardápio & Itens
+          </button>
+          
+          <button class="nav-item" id="nav-btn-kds" onclick="switchAdminSection('kds', this)">
+            <span>🍳</span> Gestor de Cozinha (KDS)
+            <span class="badge" id="sidebar-order-badge">0</span>
+          </button>
+          
+          <button class="nav-item" id="nav-btn-whatsapp" onclick="switchAdminSection('whatsapp', this)">
+            <span>🤖</span> Robô de WhatsApp
+          </button>
+
+          <button class="nav-item" id="nav-btn-planos" onclick="switchAdminSection('planos', this)">
+            <span>💎</span> Planos de Assinatura
+          </button>
+
+          <button class="nav-item" id="nav-btn-relatorios" onclick="switchAdminSection('relatorios', this)">
             <span>📊</span> Relatórios & Métricas
           </button>
         </nav>
       </div>
 
       <!-- Rodapé da Sidebar -->
-      <div style="border-top: 1px solid var(--nimbo-border); padding-top: 16px;">
-        <a href="index.html" target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; background: var(--nimbo-lime); color: var(--nimbo-navy); text-decoration: none; padding: 10px; border-radius: var(--radius-md); font-weight: 800; font-size: 13px; box-shadow: 0 4px 14px var(--nimbo-lime-glow);">
-          🔗 Ver Cardápio Online ↗
+      <div style="border-top: 1px solid var(--nimbo-border); padding-top: 16px; display: flex; flex-direction: column; gap: 10px;">
+        <a href="#" id="link-public-menu" target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; background: var(--nimbo-lime); color: var(--nimbo-navy); text-decoration: none; padding: 10px; border-radius: var(--radius-md); font-weight: 800; font-size: 13px; box-shadow: 0 4px 14px var(--nimbo-lime-glow);">
+          🔗 Ver Cardápio Público ↗
         </a>
+        <button onclick="copyPublicMenuLink()" style="background: var(--nimbo-navy-card); border: 1px solid var(--nimbo-border); color: #CBD5E1; padding: 8px; border-radius: var(--radius-md); font-size: 11.5px; font-weight: 700; cursor: pointer;">
+          📋 Copiar Link do Cardápio
+        </button>
+        <button onclick="handleLoadDemoPrompt()" style="background: transparent; border: 1px dashed #334155; color: #94A3B8; padding: 6px; border-radius: var(--radius-md); font-size: 10.5px; cursor: pointer; text-align: center;">
+          🧪 Carregar Demonstração
+        </button>
       </div>
     </aside>
 
@@ -280,31 +416,503 @@
       <!-- HEADER DO LOJISTA -->
       <header class="admin-header">
         <div>
-          <h2 style="font-size: 18px; font-weight: 800;" id="section-title">🍳 Gestor de Pedidos da Cozinha (KDS)</h2>
-          <p style="font-size: 12px; color: #94A3B8;">Acompanhamento em tempo real • Conectado ao WhatsApp oficial</p>
+          <h2 style="font-size: 18px; font-weight: 800;" id="section-title">🏠 Visão Geral & Boas-Vindas</h2>
+          <p style="font-size: 12px; color: #94A3B8;" id="section-subtitle">Acompanhe o status do seu cardápio, primeiros passos e métricas da loja.</p>
         </div>
 
-        <div style="display: flex; align-items: center; gap: 14px;">
-          <button class="sound-toggle-btn" id="sound-toggle">
-            🔊 <span>Som Ligado</span>
-          </button>
-          <button class="btn-demo-cta" style="padding: 6px 14px; font-size: 12px; color: white;" onclick="sounds.playNewOrder()">
-            🔔 Testar Som do Pedido
-          </button>
-          <div style="background: #14532D; color: #86EFAC; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 6px;">
-            <span class="status-dot"></span> Aberto para Pedidos
+        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+          <!-- Switch de Receber Pedidos -->
+          <div style="display: flex; align-items: center; gap: 8px; background: var(--nimbo-navy-card); padding: 6px 14px; border-radius: var(--radius-full); border: 1px solid var(--nimbo-border);">
+            <span style="font-size: 12px; font-weight: 700; color: #CBD5E1;">Receber Pedidos:</span>
+            <label class="status-switch">
+              <input type="checkbox" id="header-orders-toggle" onchange="handleOrdersToggle(this)">
+              <span class="switch-slider"></span>
+            </label>
+            <span id="header-orders-status-label" style="font-size: 11px; font-weight: 700; color: #94A3B8;">Pausado</span>
+          </div>
+
+          <!-- Usuário Logado & Logout -->
+          <div class="user-pill">
+            <span id="header-user-name">Usuário</span>
+            <button class="btn-logout" onclick="handleLogout()" title="Sair da conta">Sair</button>
           </div>
         </div>
       </header>
 
-      <!-- 1. SEÇÃO KDS (GESTOR DE PEDIDOS DA COZINHA) -->
-      <section class="admin-section active" id="sec-kds">
+      <!-- 0. SEÇÃO PRINCIPAL: DASHBOARD DE BOAS-VINDAS & PRIMEIROS PASSOS -->
+      <section class="admin-section active" id="sec-dashboard">
+        <!-- Hero de Boas-Vindas Personalizado -->
+        <div class="dash-welcome-card">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px;">
+            <div>
+              <div class="nimbo-badge" style="margin-bottom: 12px; background: rgba(184, 243, 107, 0.12); color: var(--nimbo-lime);">
+                <span>●</span>
+                <span id="dash-live-status-pill">CARDÁPIO ONLINE & PÚBLICO</span>
+              </div>
+              <h2 style="font-size: 26px; font-weight: 900; color: white;" id="dash-welcome-user">Bem-vindo(a)! 👋</h2>
+              <p style="font-size: 14.5px; color: var(--nimbo-text-secondary); margin-top: 6px; max-width: 600px;">
+                Gerencie sua loja <strong id="dash-store-name" style="color: white;">--</strong> na Nimbo. Personalize sua marca, adicione seus pratos e compartilhe o link permanente com seus clientes.
+              </p>
+            </div>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+              <button class="btn-nimbo-secondary" style="padding: 10px 18px; font-size: 13px;" onclick="switchAdminSection('personalizar')">
+                🏪 Personalizar Loja
+              </button>
+              <button class="btn-nimbo-primary" style="padding: 10px 20px; font-size: 13px;" onclick="switchAdminSection('preview')">
+                📱 Ver Cardápio Ao Vivo ➔
+              </button>
+            </div>
+          </div>
+
+          <!-- Link Oficial do Cardápio para a Bio -->
+          <div class="dash-link-banner" style="margin-top: 24px;">
+            <div>
+              <div style="font-size: 11px; text-transform: uppercase; color: #94A3B8; font-weight: 700; letter-spacing: 0.5px;">
+                🔗 Link permanente do seu cardápio:
+              </div>
+              <div class="dash-link-url" id="dash-public-url-display">https://nimbo.app/?r=...</div>
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button class="btn-nimbo-secondary" style="padding: 8px 14px; font-size: 12.5px;" onclick="copyPublicMenuLink()">
+                📋 Copiar Link
+              </button>
+              <a href="#" id="dash-open-tab-btn" target="_blank" class="btn-nimbo-primary" style="padding: 8px 14px; font-size: 12.5px; text-decoration: none;">
+                🔗 Abrir em Nova Guia ↗
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Checklist de Primeiros Passos -->
+        <div class="dash-checklist-card">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+            <div>
+              <h3 style="font-size: 18px; font-weight: 800; color: white;">🚀 Primeiros Passos para o seu Sucesso</h3>
+              <p style="font-size: 13px; color: var(--nimbo-text-secondary); margin-top: 4px;">
+                Complete as etapas abaixo para deixar seu cardápio 100% profissional e pronto para vender.
+              </p>
+            </div>
+            <div style="font-size: 13px; font-weight: 800; color: var(--nimbo-lime); background: rgba(184, 243, 107, 0.1); padding: 4px 12px; border-radius: var(--radius-full);" id="dash-progress-badge">
+              0 de 4 passos
+            </div>
+          </div>
+
+          <!-- Barra de Progresso Visual -->
+          <div class="dash-progress-track">
+            <div class="dash-progress-fill" id="dash-progress-fill" style="width: 25%;"></div>
+          </div>
+
+          <!-- Lista de Itens do Checklist -->
+          <div class="checklist-items-list" id="dash-checklist-items">
+            <!-- 1. Conta Criada -->
+            <div class="checklist-row completed">
+              <div style="display: flex; align-items: center; gap: 14px;">
+                <div class="checklist-status-icon">✓</div>
+                <div>
+                  <div style="font-weight: 800; font-size: 14px; color: white;">1. Criar sua conta na Nimbo</div>
+                  <div style="font-size: 12px; color: #94A3B8;">Conta criada e vinculada com segurança.</div>
+                </div>
+              </div>
+              <span style="font-size: 12px; color: #10B981; font-weight: 700;">Concluído</span>
+            </div>
+
+            <!-- 2. Personalizar Loja -->
+            <div class="checklist-row" id="check-step-personalizar">
+              <div style="display: flex; align-items: center; gap: 14px;">
+                <div class="checklist-status-icon" id="icon-step-personalizar">2</div>
+                <div>
+                  <div style="font-weight: 800; font-size: 14px; color: white;">2. Personalizar seu Estabelecimento</div>
+                  <div style="font-size: 12px; color: #94A3B8;">Defina o nome da lanchonete/restaurante, logotipo, foto de capa e WhatsApp.</div>
+                </div>
+              </div>
+              <button class="btn-nimbo-secondary" style="padding: 6px 14px; font-size: 12px;" onclick="switchAdminSection('personalizar')">
+                Personalizar ➔
+              </button>
+            </div>
+
+            <!-- 3. Cadastrar Produtos -->
+            <div class="checklist-row" id="check-step-produtos">
+              <div style="display: flex; align-items: center; gap: 14px;">
+                <div class="checklist-status-icon" id="icon-step-produtos">3</div>
+                <div>
+                  <div style="font-weight: 800; font-size: 14px; color: white;">3. Cadastrar Itens no Cardápio</div>
+                  <div style="font-size: 12px; color: #94A3B8;">Adicione seus lanches, pratos, bebidas ou sobremesas com fotos e preços.</div>
+                </div>
+              </div>
+              <button class="btn-nimbo-secondary" style="padding: 6px 14px; font-size: 12px;" onclick="switchAdminSection('cardapio')">
+                Adicionar Pratos ➔
+              </button>
+            </div>
+
+            <!-- 4. Ver e Divulgar -->
+            <div class="checklist-row" id="check-step-preview">
+              <div style="display: flex; align-items: center; gap: 14px;">
+                <div class="checklist-status-icon" id="icon-step-preview">4</div>
+                <div>
+                  <div style="font-weight: 800; font-size: 14px; color: white;">4. Testar o Cardápio Ao Vivo & Divulgar</div>
+                  <div style="font-size: 12px; color: #94A3B8;">Veja o cardápio rolando no simulador de celular e coloque o link na bio do Instagram.</div>
+                </div>
+              </div>
+              <button class="btn-nimbo-primary" style="padding: 6px 14px; font-size: 12px;" onclick="switchAdminSection('preview')">
+                Ver Cardápio ➔
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Indicadores / Métricas Rápidas -->
+        <div class="dash-metrics-grid">
+          <div class="dash-metric-card">
+            <span class="dash-metric-label">Status da Loja</span>
+            <div class="dash-metric-value" id="dash-metric-status" style="font-size: 20px; color: var(--nimbo-lime);">
+              🟢 Aberto Agora
+            </div>
+            <span class="dash-metric-sub" id="dash-metric-hours">Conforme horários semanais</span>
+          </div>
+
+          <div class="dash-metric-card">
+            <span class="dash-metric-label">Itens no Cardápio</span>
+            <div class="dash-metric-value" id="dash-metric-items">0</div>
+            <span class="dash-metric-sub">Produtos disponíveis para visualização</span>
+          </div>
+
+          <div class="dash-metric-card">
+            <span class="dash-metric-label">Plano de Assinatura</span>
+            <div class="dash-metric-value" id="dash-metric-plan" style="color: var(--nimbo-lime);">Grátis</div>
+            <span class="dash-metric-sub">
+              <a href="#" onclick="switchAdminSection('planos'); return false;" style="color: #94A3B8; text-decoration: underline;">Conhecer recursos Pro</a>
+            </span>
+          </div>
+
+          <div class="dash-metric-card">
+            <span class="dash-metric-label">Recepção de Pedidos</span>
+            <div class="dash-metric-value" id="dash-metric-orders-mode" style="font-size: 18px;">
+              💬 WhatsApp
+            </div>
+            <span class="dash-metric-sub">Modo consultivo direto para o cliente</span>
+          </div>
+        </div>
+
+        <!-- Ações de Acesso Rápido -->
+        <div style="margin-top: 10px;">
+          <h4 style="font-size: 15px; font-weight: 800; color: white; margin-bottom: 12px;">⚡ Atalhos de Gestão</h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+            <button class="btn-nimbo-secondary" style="padding: 14px; justify-content: flex-start; text-align: left;" onclick="switchAdminSection('cardapio'); openProductEditorModal();">
+              <span>➕</span>
+              <div>
+                <div style="font-weight: 800; font-size: 13px; color: white;">Adicionar Produto</div>
+                <div style="font-size: 11px; color: #94A3B8;">Cadastre foto, valor e descrição</div>
+              </div>
+            </button>
+
+            <button class="btn-nimbo-secondary" style="padding: 14px; justify-content: flex-start; text-align: left;" onclick="switchAdminSection('personalizar');">
+              <span>🏪</span>
+              <div>
+                <div style="font-weight: 800; font-size: 13px; color: white;">Personalizar Loja</div>
+                <div style="font-size: 11px; color: #94A3B8;">Logo, capa, horários e PIX</div>
+              </div>
+            </button>
+
+            <button class="btn-nimbo-secondary" style="padding: 14px; justify-content: flex-start; text-align: left;" onclick="switchAdminSection('preview');">
+              <span>📱</span>
+              <div>
+                <div style="font-weight: 800; font-size: 13px; color: white;">Ver Cardápio Ao Vivo</div>
+                <div style="font-size: 11px; color: #94A3B8;">Simulador mobile em tempo real</div>
+              </div>
+            </button>
+
+            <button class="btn-nimbo-secondary" style="padding: 14px; justify-content: flex-start; text-align: left;" onclick="switchAdminSection('planos');">
+              <span>💎</span>
+              <div>
+                <div style="font-weight: 800; font-size: 13px; color: white;">Planos de Assinatura</div>
+                <div style="font-size: 11px; color: #94A3B8;">Ative KDS da cozinha & pedidos</div>
+              </div>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 1. SEÇÃO PERSONALIZAR ESTABELECIMENTO (RESTAURANTE / LANCHONETE) -->
+      <section class="admin-section" id="sec-personalizar">
+        <div style="margin-bottom: 24px;">
+          <h3 style="font-size: 20px; font-weight: 800; color: white;">🏪 Personalizar Estabelecimento</h3>
+          <p style="font-size: 13px; color: var(--nimbo-text-secondary); margin-top: 4px;">
+            Configure a identidade do seu restaurante, lanchonete ou delivery, dados de contato e horários de atendimento.
+          </p>
+        </div>
+
+        <form id="cfg-form" onsubmit="handleConfigSubmit(event)">
+          <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 16px;">
+            <div class="form-group">
+              <label style="color: #CBD5E1; font-weight: 700;">Nome do Estabelecimento *</label>
+              <input type="text" class="form-input" id="cfg-name" required placeholder="Ex: Burger Prime, Cantina Bella, Açaiteria Real" style="background: #0F172A; color: white; border-color: #334155;">
+            </div>
+
+            <div class="form-group">
+              <label style="color: #CBD5E1; font-weight: 700;">Tipo de Estabelecimento</label>
+              <select class="form-input" id="cfg-category-type" style="background: #0F172A; color: white; border-color: #334155;">
+                <option value="Lanchonete & Hambúrgueres">Lanchonete & Hambúrgueres</option>
+                <option value="Pizzaria">Pizzaria</option>
+                <option value="Restaurante & Marmitaria">Restaurante & Marmitaria</option>
+                <option value="Açaí & Sorvetes">Açaí & Sorvetes</option>
+                <option value="Cafeteria & Doceria">Cafeteria & Doceria</option>
+                <option value="Comida Japonesa & Oriental">Comida Japonesa & Oriental</option>
+                <option value="Petiscaria & Espetaria">Petiscaria & Espetaria</option>
+                <option value="Bebidas & Distribuidora">Bebidas & Distribuidora</option>
+                <option value="Outro">Outro segmento</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 14px;">
+            <div class="form-group">
+              <label style="color: #CBD5E1; font-weight: 700;">Link Público / Slug Permanente *</label>
+              <div style="display: flex; align-items: center; background: #0F172A; border: 1px solid #334155; border-radius: var(--radius-md); padding-left: 10px;">
+                <span style="font-size: 12px; color: #94A3B8;">nimbo.app/?r=</span>
+                <input type="text" id="cfg-slug" required style="flex: 1; background: transparent; border: none; color: var(--nimbo-lime); padding: 12px 8px; font-weight: 700; outline: none; font-family: inherit;">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label style="color: #CBD5E1; font-weight: 700;">Slogan / Especialidade</label>
+              <input type="text" class="form-input" id="cfg-tagline" placeholder="Ex: Hambúrgueres artesanais na brasa & shakes" style="background: #0F172A; color: white; border-color: #334155;">
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-top: 14px;">
+            <label style="color: #CBD5E1; font-weight: 700;">Descrição / Bio do Estabelecimento</label>
+            <textarea class="obs-input" id="cfg-desc" placeholder="Ex: Há 8 anos servindo os melhores pratos da região com ingredientes frescos e entrega rápida." style="background: #0F172A; color: white; border-color: #334155; min-height: 70px;"></textarea>
+          </div>
+
+          <!-- Fotos com Preview Visual em Tempo Real -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 14px;">
+            <div class="form-group">
+              <label style="color: #CBD5E1; font-weight: 700;">URL da Imagem de Capa (Banner)</label>
+              <input type="url" class="form-input" id="cfg-cover" placeholder="https://exemplo.com/capa.jpg" oninput="updateVisualPreview()" style="background: #0F172A; color: white; border-color: #334155;">
+            </div>
+            <div class="form-group">
+              <label style="color: #CBD5E1; font-weight: 700;">URL da Foto de Perfil / Logo</label>
+              <input type="url" class="form-input" id="cfg-avatar" placeholder="https://exemplo.com/logo.jpg" oninput="updateVisualPreview()" style="background: #0F172A; color: white; border-color: #334155;">
+            </div>
+          </div>
+
+          <!-- Preview Visual da Capa e Logo -->
+          <div class="custom-visual-preview" id="custom-visual-preview-box">
+            <img src="https://images.unsplash.com/photo-1550547660-d9450f859349?w=1000&auto=format&fit=crop&q=80" id="preview-cover-img" class="custom-cover-preview" alt="Preview Capa">
+            <img src="https://images.unsplash.com/photo-1550547660-d9450f859349?w=200&auto=format&fit=crop&q=80" id="preview-avatar-img" class="custom-avatar-overlay" alt="Preview Logo">
+            <div style="position: absolute; bottom: 14px; left: 90px; color: white; text-shadow: 0 1px 4px rgba(0,0,0,0.8);">
+              <div style="font-weight: 800; font-size: 15px;" id="preview-title-text">Meu Restaurante</div>
+              <div style="font-size: 12px; color: #E2E8F0;" id="preview-tagline-text">Prévia em tempo real da sua capa</div>
+            </div>
+          </div>
+
+          <!-- Contatos e Pagamento -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px;">
+            <div class="form-group">
+              <label style="color: #CBD5E1; font-weight: 700;">WhatsApp para Atendimento / Pedidos *</label>
+              <input type="tel" class="form-input" id="cfg-whatsapp" placeholder="(00) 00000-0000" style="background: #0F172A; color: white; border-color: #334155;">
+            </div>
+            <div class="form-group">
+              <label style="color: #CBD5E1; font-weight: 700;">Telefone Fixo / Contato Adicional</label>
+              <input type="tel" class="form-input" id="cfg-phone" placeholder="(00) 0000-0000" style="background: #0F172A; color: white; border-color: #334155;">
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-top: 14px;">
+            <label style="color: #CBD5E1; font-weight: 700;">Chave PIX do Estabelecimento</label>
+            <input type="text" class="form-input" id="cfg-pix" placeholder="E-mail, CPF, CNPJ ou Celular" style="background: #0F172A; color: #25D366; font-weight: 700; border-color: #334155;">
+            <small style="color: #94A3B8; font-size: 11px; margin-top: 4px; display: block;">
+              Quando o cliente escolher pagamento por PIX, o QR Code é gerado diretamente para a sua conta sem taxa de intermediação.
+            </small>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 14px;">
+            <div class="form-group">
+              <label style="color: #CBD5E1; font-weight: 700;">Taxa de Entrega Padrão (R$)</label>
+              <input type="number" step="0.50" min="0" class="form-input" id="cfg-delivery-fee" style="background: #0F172A; color: white; border-color: #334155;">
+            </div>
+            <div class="form-group">
+              <label style="color: #CBD5E1; font-weight: 700;">Tempo Estimado de Entrega (ETA)</label>
+              <input type="text" class="form-input" id="cfg-eta" placeholder="Ex: 30-45 min" style="background: #0F172A; color: white; border-color: #334155;">
+            </div>
+          </div>
+
+          <!-- Horários de Funcionamento da Semana -->
+          <div style="margin-top: 24px; border-top: 1px solid #334155; padding-top: 20px;">
+            <h4 style="font-size: 16px; font-weight: 800; color: white;">Horários de Funcionamento por Dia da Semana</h4>
+            <p style="font-size: 12.5px; color: #94A3B8; margin-top: 4px; margin-bottom: 12px;">
+              Marque os dias em que o estabelecimento abre e o horário de atendimento. O cardápio mostra automaticamente se está aberto ou fechado.
+            </p>
+
+            <table class="hours-table">
+              <tbody id="cfg-hours-tbody">
+                <!-- Renderizado dinamicamente -->
+              </tbody>
+            </table>
+          </div>
+
+          <div style="display: flex; gap: 12px; margin-top: 24px;">
+            <button type="submit" class="btn-nimbo-primary" style="padding: 14px 28px; font-size: 14px;">
+              💾 Salvar Personalização da Loja
+            </button>
+            <button type="button" class="btn-nimbo-secondary" style="padding: 14px 20px; font-size: 14px;" onclick="switchAdminSection('preview')">
+              📱 Ver Como Ficou ➔
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- 2. SEÇÃO VER CARDÁPIO AO VIVO (SIMULADOR SMARTPHONE MOCKUP) -->
+      <section class="admin-section" id="sec-preview">
+        <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+          <div>
+            <h3 style="font-size: 20px; font-weight: 800; color: white;">📱 Cardápio Ao Vivo no Celular</h3>
+            <p style="font-size: 13px; color: var(--nimbo-text-secondary); margin-top: 4px;">
+              Teste exatamente a mesma experiência que seus clientes têm ao abrir seu link no smartphone.
+            </p>
+          </div>
+
+          <div style="display: flex; gap: 10px;">
+            <button class="btn-nimbo-secondary" style="padding: 8px 14px; font-size: 13px;" onclick="reloadPhonePreview()" title="Recarregar tela do celular">
+              🔄 Atualizar Preview
+            </button>
+            <a href="#" id="preview-external-link" target="_blank" class="btn-nimbo-primary" style="padding: 8px 16px; font-size: 13px; text-decoration: none;">
+              🔗 Abrir em Nova Guia ↗
+            </a>
+          </div>
+        </div>
+
+        <div class="preview-layout-container">
+          <!-- Moldura Realista de Celular (Smartphone Mockup) -->
+          <div class="phone-mockup-wrapper">
+            <div class="phone-mockup">
+              <!-- Notch / Dynamic Island -->
+              <div class="phone-notch">
+                <div class="phone-camera-dot"></div>
+              </div>
+
+              <!-- Barra de Status Mobile -->
+              <div class="phone-status-bar">
+                <span id="phone-clock-text">19:30</span>
+                <div style="display: flex; gap: 6px; align-items: center;">
+                  <span>📶</span>
+                  <span>🔋</span>
+                </div>
+              </div>
+
+              <!-- Tela do Celular com Iframe Interativo do Cardápio -->
+              <iframe id="phone-preview-iframe" class="phone-viewport-iframe" src="about:blank"></iframe>
+            </div>
+          </div>
+
+          <!-- Coluna Lateral de Instruções & Divulgação -->
+          <div class="preview-sidebar-info">
+            <div class="preview-action-card">
+              <h4 style="font-size: 16px; font-weight: 800; color: white; margin-bottom: 8px;">🔗 Link Oficial do Cardápio</h4>
+              <p style="font-size: 13px; color: var(--nimbo-text-secondary); line-height: 1.5; margin-bottom: 14px;">
+                Este é o link permanente do seu estabelecimento na Nimbo. Ele é 100% gratuito e não muda:
+              </p>
+
+              <div class="dash-link-url" id="preview-url-box" style="margin-bottom: 14px;">
+                https://nimbo.app/?r=...
+              </div>
+
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                <button class="btn-nimbo-primary" style="justify-content: center; padding: 12px;" onclick="copyPublicMenuLink()">
+                  📋 Copiar Link para a Bio do Instagram
+                </button>
+                <a href="#" id="preview-share-whatsapp-btn" target="_blank" class="btn-nimbo-secondary" style="justify-content: center; padding: 12px; text-decoration: none; color: #25D366; border-color: rgba(37, 211, 102, 0.4);">
+                  💬 Compartilhar no WhatsApp
+                </a>
+              </div>
+            </div>
+
+            <div class="preview-action-card">
+              <h4 style="font-size: 15px; font-weight: 800; color: white; margin-bottom: 8px;">💡 Dicas para Aumentar suas Vendas</h4>
+              <ul style="font-size: 13px; color: var(--nimbo-text-secondary); line-height: 1.6; padding-left: 18px; margin: 0; display: flex; flex-direction: column; gap: 8px;">
+                <li><strong>Instagram:</strong> Insira o link diretamente no campo "Site" da sua biografia.</li>
+                <li><strong>WhatsApp Business:</strong> Adicione o link na mensagem de saudação automática para clientes.</li>
+                <li><strong>Na Loja:</strong> Crie um QR Code com este link para colocar nas mesas e no balcão.</li>
+                <li><strong>Fotos:</strong> Pratos com fotos nítidas convertem até 3x mais que itens sem imagem.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. SEÇÃO GESTÃO DO CARDÁPIO & PRODUTOS -->
+      <section class="admin-section" id="sec-cardapio">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+          <div>
+            <h3 style="font-size: 20px; font-weight: 800;">Produtos do Cardápio</h3>
+            <p style="font-size: 13px; color: #94A3B8;">Organize seus itens por categorias com fotos, descrições e preços.</p>
+          </div>
+          <div style="display: flex; gap: 10px;">
+            <button class="btn-nimbo-secondary" style="padding: 10px 16px; font-size: 13px;" onclick="openNewCategoryModal()">
+              + Nova Categoria
+            </button>
+            <button class="btn-nimbo-primary" style="padding: 10px 20px; font-size: 13px;" onclick="openProductEditorModal()">
+              + Novo Produto
+            </button>
+          </div>
+        </div>
+
+        <!-- Categorias existentes em Chips -->
+        <div class="category-pills-bar" id="admin-category-chips"></div>
+
+        <!-- Tabela de Produtos ou Empty State -->
+        <div id="admin-products-container">
+          <table class="menu-mgmt-table" id="admin-products-table">
+            <thead>
+              <tr>
+                <th>Foto & Produto</th>
+                <th>Categoria</th>
+                <th>Preço</th>
+                <th>Disponibilidade</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="admin-products-table-body"></tbody>
+          </table>
+
+          <div id="admin-products-empty" class="nimbo-empty-state" style="display: none;">
+            <div class="nimbo-empty-icon">🍔</div>
+            <h4 class="nimbo-empty-title">Nenhum produto cadastrado ainda</h4>
+            <p class="nimbo-empty-desc">
+              Comece adicionando os lanches, bebidas ou pratos que você vende para que apareçam imediatamente no seu cardápio digital.
+            </p>
+            <button class="btn-nimbo-primary" style="padding: 12px 24px; font-size: 14px;" onclick="openProductEditorModal()">
+              + Adicionar Meu Primeiro Produto
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. SEÇÃO KDS (GESTOR DE PEDIDOS DA COZINHA) -->
+      <section class="admin-section" id="sec-kds">
+        <!-- Aviso de Plano Grátis se os pedidos estiverem inativos -->
+        <div id="kds-plan-gate-alert" style="display: none; background: rgba(184, 243, 107, 0.08); border: 1px solid var(--nimbo-lime); border-radius: var(--radius-lg); padding: 20px; margin-bottom: 24px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+            <div>
+              <div style="font-weight: 800; font-size: 16px; color: var(--nimbo-lime); display: flex; align-items: center; gap: 8px;">
+                <span>🔒</span> <span>Ative o recebimento de pedidos no seu restaurante</span>
+              </div>
+              <p style="font-size: 13px; color: #CBD5E1; margin-top: 4px; max-width: 650px;">
+                Seu cardápio está funcionando gratuitamente para consulta. Para começar a receber pedidos automáticos e gerenciar a fila da cozinha em tempo real, escolha o plano Essencial ou Pro.
+              </p>
+            </div>
+            <button class="btn-nimbo-primary" style="padding: 10px 20px; font-size: 13px;" onclick="switchAdminSection('planos')">
+              Ver Planos e Ativar Pedidos ➔
+            </button>
+          </div>
+        </div>
+
         <!-- Métricas Rápidas do Dia -->
         <div class="kds-stats-strip">
           <div class="stat-card" style="background: #1E293B; border-color: #334155; color: white;">
             <div class="stat-icon green">💰</div>
             <div>
-              <div class="stat-val" id="kds-stat-revenue" style="color: white;">R$ 1.485,00</div>
+              <div class="stat-val" id="kds-stat-revenue" style="color: white;">R$ 0,00</div>
               <div class="stat-title" style="color: #94A3B8;">Faturamento Hoje</div>
             </div>
           </div>
@@ -312,7 +920,7 @@
           <div class="stat-card" style="background: #1E293B; border-color: #334155; color: white;">
             <div class="stat-icon orange">📦</div>
             <div>
-              <div class="stat-val" id="kds-stat-count" style="color: white;">23</div>
+              <div class="stat-val" id="kds-stat-count" style="color: white;">0</div>
               <div class="stat-title" style="color: #94A3B8;">Pedidos Hoje</div>
             </div>
           </div>
@@ -320,7 +928,7 @@
           <div class="stat-card" style="background: #1E293B; border-color: #334155; color: white;">
             <div class="stat-icon blue">⏱️</div>
             <div>
-              <div class="stat-val" style="color: white;">28 min</div>
+              <div class="stat-val" id="kds-stat-eta" style="color: white;">-- min</div>
               <div class="stat-title" style="color: #94A3B8;">Tempo Médio de Preparo</div>
             </div>
           </div>
@@ -328,7 +936,7 @@
           <div class="stat-card" style="background: #1E293B; border-color: #334155; color: white;">
             <div class="stat-icon purple">💳</div>
             <div>
-              <div class="stat-val" id="kds-stat-ticket" style="color: white;">R$ 64,50</div>
+              <div class="stat-val" id="kds-stat-ticket" style="color: white;">R$ 0,00</div>
               <div class="stat-title" style="color: #94A3B8;">Ticket Médio</div>
             </div>
           </div>
@@ -370,66 +978,49 @@
         </div>
       </section>
 
-      <!-- 2. SEÇÃO GESTÃO DO CARDÁPIO & ESTOQUE -->
-      <section class="admin-section" id="sec-cardapio">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-          <div>
-            <h3 style="font-size: 20px; font-weight: 800;">Gerenciar Itens do Cardápio</h3>
-            <p style="font-size: 13px; color: #94A3B8;">Pause itens que esgotaram no dia ou altere preços rapidamente.</p>
-          </div>
-          <button class="btn-nimbo-primary" style="padding: 10px 20px; font-size: 13px;" onclick="openNewProductPrompt()">
-            + Novo Produto
-          </button>
-        </div>
-
-        <table class="menu-mgmt-table">
-          <thead>
-            <tr>
-              <th>Foto & Produto</th>
-              <th>Categoria</th>
-              <th>Preço Atual</th>
-              <th>Status no Cardápio</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody id="admin-products-table-body">
-            <!-- Renderizado dinamicamente via app.js -->
-          </tbody>
-        </table>
-      </section>
-
       <!-- 3. SEÇÃO ROBÔ DE ATENDIMENTO WHATSAPP -->
       <section class="admin-section" id="sec-whatsapp">
+        <div id="bot-plan-gate-alert" style="display: none; background: rgba(56, 189, 248, 0.08); border: 1px solid #38BDF8; border-radius: var(--radius-lg); padding: 18px; margin-bottom: 24px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
+            <div>
+              <strong style="color: #38BDF8; font-size: 15px;">🤖 Recurso exclusivo do plano Nimbo Pro</strong>
+              <p style="font-size: 13px; color: #CBD5E1; margin-top: 4px;">
+                Automatize o atendimento aos clientes no WhatsApp, envio de link de cardápio e notificações automáticas de status de pedido.
+              </p>
+            </div>
+            <button class="btn-nimbo-secondary" style="border-color: #38BDF8; color: #38BDF8;" onclick="switchAdminSection('planos')">
+              Conhecer o Nimbo Pro ➔
+            </button>
+          </div>
+        </div>
+
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start;">
-          
           <!-- Lado Esquerdo: Configuração das Mensagens -->
           <div class="form-card">
-            <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 8px;">Mensagens Automáticas da IA</h3>
+            <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 8px;">Mensagens Automáticas</h3>
             <p style="font-size: 13px; color: #94A3B8; margin-bottom: 20px;">
               Personalize exatamente como o robô responde aos clientes no WhatsApp.
             </p>
 
             <div class="form-group">
-              <label style="color: #CBD5E1; font-weight: 700;">1. Mensagem de Boas-Vindas & Reativação</label>
-              <textarea class="obs-input" id="bot-welcome-msg" style="background: #0F172A; color: white; border-color: #334155; min-height: 100px;">🍔 {nome}, que saudade! Faz tempo desde seu último pedido 😄
-Volte a matar a fome com a gente!
-👉 Abra o cardápio e peça agora! 🔥
+              <label style="color: #CBD5E1; font-weight: 700;">1. Mensagem de Boas-Vindas</label>
+              <textarea class="obs-input" id="bot-welcome-msg" style="background: #0F172A; color: white; border-color: #334155; min-height: 90px;">Olá {nome}! Seja bem-vindo ao nosso restaurante 😄
+👉 Acesse nosso cardápio digital completo:
 {link_cardapio}
-Estamos sempre abertos.</textarea>
+Estamos prontos para te atender!</textarea>
             </div>
 
-            <div class="form-group" style="margin-top: 16px;">
+            <div class="form-group" style="margin-top: 14px;">
               <label style="color: #CBD5E1; font-weight: 700;">2. Confirmação de Pedido em Produção</label>
-              <textarea class="obs-input" id="bot-order-msg" style="background: #0F172A; color: white; border-color: #334155; min-height: 100px;">Oba! Seu pedido está EM PRODUÇÃO! 🥳
+              <textarea class="obs-input" id="bot-order-msg" style="background: #0F172A; color: white; border-color: #334155; min-height: 90px;">Oba! Seu pedido está EM PRODUÇÃO! 🥳
 Pedido nº {numero}
 Itens: {itens}
-🛵 Delivery ({taxa})
 Total: {total}</textarea>
             </div>
 
-            <div class="form-group" style="margin-top: 16px;">
+            <div class="form-group" style="margin-top: 14px;">
               <label style="color: #CBD5E1; font-weight: 700;">3. Aviso de Despacho com Motoboy</label>
-              <textarea class="obs-input" id="bot-route-msg" style="background: #0F172A; color: white; border-color: #334155; min-height: 80px;">🛵 {nome}, seu pedido nº {numero} acabou de sair para entrega com nosso motoboy!
+              <textarea class="obs-input" id="bot-route-msg" style="background: #0F172A; color: white; border-color: #334155; min-height: 80px;">🛵 {nome}, seu pedido nº {numero} acabou de sair para entrega!
 Previsão: 15 a 20 minutos. Bom apetite! 😋</textarea>
             </div>
 
@@ -441,14 +1032,14 @@ Previsão: 15 a 20 minutos. Bom apetite! 😋</textarea>
           <!-- Lado Direito: Simulador Visual do WhatsApp -->
           <div>
             <div style="font-weight: 800; font-size: 15px; margin-bottom: 10px; color: #94A3B8;">
-              Pré-visualização do WhatsApp do Cliente:
+              Simulador do WhatsApp:
             </div>
             <div class="whatsapp-sim-wrapper" style="margin: 0; box-shadow: var(--shadow-lg);">
               <div class="wa-header">
                 <div class="wa-contact-box">
-                  <img src="https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=250&q=80" alt="B Lugar Legal" class="wa-avatar">
+                  <div class="wa-avatar" id="wa-avatar-box" style="display:flex;align-items:center;justify-content:center;background:#0F172A;font-size:18px;">🍽️</div>
                   <div>
-                    <div class="wa-name">B Lugar Legal • Oficial ✅</div>
+                    <div class="wa-name" id="wa-header-name">Restaurante Oficial ✅</div>
                     <div class="wa-status">online • Atendimento Inteligente 24h</div>
                   </div>
                 </div>
@@ -459,7 +1050,7 @@ Previsão: 15 a 20 minutos. Bom apetite! 😋</textarea>
               <div class="wa-quick-actions">
                 <button class="wa-quick-btn" onclick="simulateQuickAction('oi')">💬 Simular "Boa noite"</button>
                 <button class="wa-quick-btn" onclick="simulateQuickAction('cardapio')">🍔 Pedir Cardápio</button>
-                <button class="wa-quick-btn" onclick="simulateQuickAction('status')">📍 Status Pedido #22</button>
+                <button class="wa-quick-btn" onclick="simulateQuickAction('status')">📍 Status do Pedido</button>
               </div>
 
               <div class="wa-footer">
@@ -468,262 +1059,1053 @@ Previsão: 15 a 20 minutos. Bom apetite! 😋</textarea>
               </div>
             </div>
           </div>
-
         </div>
       </section>
 
-      <!-- 4. SEÇÃO CONFIGURAÇÕES DA LOJA & CHAVE PIX -->
-      <section class="admin-section" id="sec-config">
-        <div class="form-card" style="max-width: 700px;">
-          <h3 style="font-size: 20px; font-weight: 800; margin-bottom: 8px;">Dados do Restaurante & Recebimento de PIX</h3>
-          <p style="font-size: 13px; color: #94A3B8; margin-bottom: 24px;">
-            Configure onde o dinheiro das vendas vai cair e as regras de entrega da sua loja.
+
+
+      <!-- 5. SEÇÃO PLANOS DE ASSINATURA NIMBO -->
+      <section class="admin-section" id="sec-planos">
+        <div style="text-align: center; max-width: 680px; margin: 0 auto 30px;">
+          <h3 style="font-size: 24px; font-weight: 800; color: white;">Planos Transparentes e Sem Pegadinhas</h3>
+          <p style="font-size: 14px; color: var(--nimbo-text-secondary); margin-top: 6px;">
+            Seu cardápio digital continuará 100% gratuito e permanente. Escolha um plano quando quiser ativar o recebimento e a gestão de pedidos na cozinha.
           </p>
+        </div>
 
-          <div class="form-group">
-            <label style="color: #CBD5E1; font-weight: 700;">Nome do Restaurante</label>
-            <input type="text" class="form-input" id="cfg-store-name" value="B Lugar Legal 🍔" style="background: #0F172A; color: white; border-color: #334155;">
-          </div>
+        <div class="plans-grid-admin" id="admin-plans-container">
+          <!-- Renderizado dinamicamente via plans_config.js -->
+        </div>
 
-          <div class="form-group" style="margin-top: 14px;">
-            <label style="color: #CBD5E1; font-weight: 700;">Chave PIX do Restaurante (onde cai 100% do dinheiro das vendas)</label>
-            <input type="text" class="form-input" id="cfg-pix-key" value="blugarlegal@gmail.com" placeholder="CPF, CNPJ, Telefone ou E-mail" style="background: #0F172A; color: white; border-color: #334155; font-weight: 700; color: #25D366;">
-            <small style="color: #94A3B8; font-size: 11px; margin-top: 4px; display: block;">
-              Quando o cliente escolhe PIX no cardápio, o QR Code é gerado para essa chave e o dinheiro cai na hora na sua conta!
-            </small>
-          </div>
-
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 14px;">
-            <div class="form-group">
-              <label style="color: #CBD5E1; font-weight: 700;">Taxa de Entrega Padrão (R$)</label>
-              <input type="number" step="0.50" class="form-input" id="cfg-delivery-fee" value="6.00" style="background: #0F172A; color: white; border-color: #334155;">
-            </div>
-            <div class="form-group">
-              <label style="color: #CBD5E1; font-weight: 700;">Tempo Estimado de Entrega</label>
-              <input type="text" class="form-input" id="cfg-eta" value="30-45 min" style="background: #0F172A; color: white; border-color: #334155;">
-            </div>
-          </div>
-
-          <div class="form-group" style="margin-top: 14px;">
-            <label style="color: #CBD5E1; font-weight: 700;">WhatsApp do Restaurante</label>
-            <input type="text" class="form-input" id="cfg-whatsapp" value="(11) 98765-4321" style="background: #0F172A; color: white; border-color: #334155;">
-          </div>
-
-          <button class="btn-nimbo-primary" style="margin-top: 24px; padding: 14px 28px;" onclick="saveStoreSettings()">
-            💾 Salvar Configurações da Loja
-          </button>
+        <div style="margin-top: 36px; background: #1E293B; border-radius: var(--radius-lg); padding: 20px; border: 1px solid #334155; font-size: 13px; color: #94A3B8; text-align: center;">
+          <strong style="color: white;">Informações de Pagamento & Faturamento:</strong>
+          <p style="margin-top: 6px;">
+            A Nimbo não cobra taxas nem comissões sobre as suas vendas. O dinheiro do PIX cai direto na sua chave e você só paga a mensalidade fixa do plano contratado. Cancele quando quiser sem multa.
+          </p>
         </div>
       </section>
 
-      <!-- 5. SEÇÃO RELATÓRIOS & MÉTRICAS -->
+      <!-- 6. SEÇÃO RELATÓRIOS & MÉTRICAS -->
       <section class="admin-section" id="sec-relatorios">
+        <div id="reports-plan-gate-alert" style="display: none; background: rgba(56, 189, 248, 0.08); border: 1px solid #38BDF8; border-radius: var(--radius-lg); padding: 18px; margin-bottom: 24px;">
+          <strong style="color: #38BDF8; font-size: 15px;">📊 Relatórios disponíveis no plano Nimbo Pro</strong>
+          <p style="font-size: 13px; color: #CBD5E1; margin-top: 4px;">
+            Acompanhe métricas financeiras, formas de pagamento mais utilizadas e histórico de pedidos.
+          </p>
+        </div>
+
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
-          
           <div class="form-card">
             <h4 style="color: #94A3B8; font-size: 13px; text-transform: uppercase;">Divisão por Forma de Pagamento</h4>
             <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 14px;">
               <div>
                 <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 700;">
                   <span>🟢 PIX Instantâneo</span>
-                  <span style="color: #25D366;">68% (R$ 1.010,00)</span>
+                  <span style="color: #25D366;" id="report-pix-stat">100%</span>
                 </div>
                 <div style="height: 8px; background: #334155; border-radius: 4px; margin-top: 6px; overflow: hidden;">
-                  <div style="height: 100%; width: 68%; background: #25D366;"></div>
-                </div>
-              </div>
-
-              <div>
-                <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 700;">
-                  <span>💳 Cartão na Maquininha</span>
-                  <span style="color: #38BDF8;">24% (R$ 356,40)</span>
-                </div>
-                <div style="height: 8px; background: #334155; border-radius: 4px; margin-top: 6px; overflow: hidden;">
-                  <div style="height: 100%; width: 24%; background: #38BDF8;"></div>
-                </div>
-              </div>
-
-              <div>
-                <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 700;">
-                  <span>💵 Dinheiro</span>
-                  <span style="color: #FBBF24;">8% (R$ 118,60)</span>
-                </div>
-                <div style="height: 8px; background: #334155; border-radius: 4px; margin-top: 6px; overflow: hidden;">
-                  <div style="height: 100%; width: 8%; background: #FBBF24;"></div>
+                  <div style="height: 100%; width: 100%; background: #25D366;"></div>
                 </div>
               </div>
             </div>
           </div>
 
           <div class="form-card">
-            <h4 style="color: #94A3B8; font-size: 13px; text-transform: uppercase;">Top Produtos Mais Vendidos</h4>
-            <div style="margin-top: 16px; display: flex; flex-direction: column; gap: 12px; font-size: 13.5px;">
-              <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #334155; padding-bottom: 8px;">
-                <span>🥇 1. X Burger Especial</span>
-                <strong>42 pedidos</strong>
-              </div>
-              <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #334155; padding-bottom: 8px;">
-                <span>🥈 2. Smash Bacon Duplo</span>
-                <strong>28 pedidos</strong>
-              </div>
-              <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #334155; padding-bottom: 8px;">
-                <span>🥉 3. Batata Frita Rústica</span>
-                <strong>35 pedidos</strong>
-              </div>
-              <div style="display: flex; justify-content: space-between; padding-top: 4px;">
-                <span>🥤 4. Coca-Cola Zero 350ml</span>
-                <strong>51 pedidos</strong>
-              </div>
+            <h4 style="color: #94A3B8; font-size: 13px; text-transform: uppercase;">Itens Mais Populares</h4>
+            <div id="report-popular-items" style="margin-top: 16px; display: flex; flex-direction: column; gap: 12px; font-size: 13.5px;">
+              <span style="color: #94A3B8; font-size: 13px;">Nenhum pedido registrado hoje.</span>
             </div>
           </div>
-
         </div>
       </section>
 
     </div>
   </div>
 
-  <!-- BARRA FLUTUANTE DE NAVEGAÇÃO ENTRE AS TELAS DO NIMBO -->
+  <!-- MODAL DE ATIVAÇÃO DE PEDIDOS (QUANDO O PLANO GRÁTIS TENTA ATIVAR PEDIDOS) -->
+  <div class="nimbo-modal-backdrop" id="modal-activate-orders" style="display: none;">
+    <div class="nimbo-modal-box">
+      <button class="nimbo-modal-close" onclick="closeActivateOrdersModal()">✕</button>
+      <div class="nimbo-modal-icon-badge">🚀</div>
+      <h3 class="nimbo-modal-title">Seu cardápio está pronto para receber pedidos.</h3>
+      <p class="nimbo-modal-text">
+        Seu restaurante já tem uma página pública na Nimbo. Para começar a receber e gerenciar pedidos por aqui, escolha um plano que inclua essa funcionalidade.
+      </p>
+
+      <div class="nimbo-modal-card-highlight">
+        <span>💡</span>
+        <div>
+          <strong>Fique tranquilo!</strong> Seu cardápio continuará disponível gratuitamente na internet mesmo se decidir não assinar agora.
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; margin-top: 24px;">
+        <button class="btn-nimbo-secondary" style="flex: 1; justify-content: center; font-size: 13px;" onclick="closeActivateOrdersModal()">
+          Continuar no Grátis
+        </button>
+        <button class="btn-nimbo-primary" style="flex: 1.4; justify-content: center; font-size: 13.5px;" onclick="handleGoToPlansFromModal()">
+          Conhecer planos e ativar pedidos ➔
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DE CRIAÇÃO / EDIÇÃO DE PRODUTO -->
+  <div class="nimbo-modal-backdrop" id="modal-product-editor" style="display: none;">
+    <div class="nimbo-modal-box" style="max-width: 560px;">
+      <button class="nimbo-modal-close" onclick="closeProductEditorModal()">✕</button>
+      <h3 class="nimbo-modal-title" id="prod-modal-title">Novo Produto</h3>
+      <p class="nimbo-modal-text" style="margin-top: 4px;">Preencha os detalhes do item para exibir no cardápio digital.</p>
+
+      <form id="form-product-editor" onsubmit="handleProductFormSubmit(event)" style="display: flex; flex-direction: column; gap: 14px; margin-top: 18px;">
+        <input type="hidden" id="prod-form-id">
+        
+        <div class="form-group">
+          <label style="color: #CBD5E1; font-weight: 700; font-size: 12.5px;">Nome do Produto *</label>
+          <input type="text" class="form-input" id="prod-form-name" required placeholder="Ex: X Bacon Especial" style="background: #070D18; color: white; border-color: #334155;">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="form-group">
+            <label style="color: #CBD5E1; font-weight: 700; font-size: 12.5px;">Categoria *</label>
+            <select class="form-input" id="prod-form-cat" required style="background: #070D18; color: white; border-color: #334155;"></select>
+          </div>
+          <div class="form-group">
+            <label style="color: #CBD5E1; font-weight: 700; font-size: 12.5px;">Preço de Venda (R$) *</label>
+            <input type="number" step="0.50" min="0" class="form-input" id="prod-form-price" required placeholder="25.00" style="background: #070D18; color: white; border-color: #334155;">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label style="color: #CBD5E1; font-weight: 700; font-size: 12.5px;">Descrição do Produto</label>
+          <textarea class="obs-input" id="prod-form-desc" placeholder="Ingredientes, tamanho da porção, acompanhamentos..." style="background: #070D18; color: white; border-color: #334155; min-height: 70px;"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label style="color: #CBD5E1; font-weight: 700; font-size: 12.5px;">URL da Foto (opcional)</label>
+          <input type="url" class="form-input" id="prod-form-image" placeholder="https://images.unsplash.com/..." style="background: #070D18; color: white; border-color: #334155;">
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 10px; margin-top: 4px;">
+          <input type="checkbox" id="prod-form-available" checked style="width: 18px; height: 18px; accent-color: var(--nimbo-lime);">
+          <label for="prod-form-available" style="font-size: 13px; font-weight: 700; color: #CBD5E1; cursor: pointer;">Item Disponível para Pedidos</label>
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-top: 14px;">
+          <button type="button" class="btn-nimbo-secondary" style="flex: 1; justify-content: center;" onclick="closeProductEditorModal()">
+            Cancelar
+          </button>
+          <button type="submit" class="btn-nimbo-primary" style="flex: 1.3; justify-content: center;">
+            💾 Salvar Produto
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- BARRA FLUTUANTE DE NAVEGAÇÃO ENTRE OS MÓDULOS -->
   <nav class="nimbo-switcher-bar" aria-label="Alternar Módulos do Nimbo">
     <div class="nimbo-switcher-brand">
       <svg viewBox="0 0 32 32" fill="none"><path d="M10 22C7.79086 22 6 20.2091 6 18C6 15.9818 7.49557 14.3129 9.44498 14.0454C9.89736 10.6358 12.8021 8 16.3636 8C19.4674 8 22.0674 10.0076 22.9511 12.7936C24.7118 13.2081 26 14.7797 26 16.6667C26 18.8758 24.2091 20.6667 22 20.6667H21" stroke="#B8F36B" stroke-width="2.5"/><path d="M12 21V13.5L18.5 21V13.5" stroke="#B8F36B" stroke-width="2.5"/></svg>
       <span>Nimbo</span>
     </div>
     <div class="nimbo-switcher-links">
-      <a href="index.html" class="nimbo-switch-btn" title="Ir para o Cardápio do Cliente">📱 Cardápio</a>
+      <a href="index.html" class="nimbo-switch-btn" id="switcher-menu-link" title="Ir para o Cardápio do Cliente">📱 Cardápio</a>
       <a href="painel.html" class="nimbo-switch-btn active" title="Você está no Painel do Restaurante">🍳 Painel Cozinha</a>
       <a href="vender.html" class="nimbo-switch-btn highlight" title="Ir para a Página de Vendas do SaaS">🚀 Página de Vendas</a>
     </div>
   </nav>
 
-  <script src="app.js"></script>
+  <!-- SCRIPTS DO PAINEL (COMPATÍVEL COM FILE:// E HTTP://) -->
+  <script src="plans_config.js"></script>
+  <script src="nimbo-core.js"></script>
   <script>
-    // Navegação entre abas do Painel
-    function switchAdminSection(sectionId, btnElement) {
-      document.querySelectorAll('.admin-section').forEach(sec => sec.classList.remove('active'));
-      document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
-      
-      const targetSec = document.getElementById(`sec-${sectionId}`);
-      if (targetSec) targetSec.classList.add('active');
-      if (btnElement) btnElement.classList.add('active');
+    const NimboAuth = window.NimboAuth;
+    const NimboRestaurant = window.NimboRestaurant;
+    const NimboMenu = window.NimboMenu;
+    const NimboOrders = window.NimboOrders;
+    const NimboPlans = window.NimboPlans;
+    const NIMBO_PLANS = window.NIMBO_PLANS || {};
 
-      const titleMap = {
-        'kds': '🍳 Gestor de Pedidos da Cozinha (KDS)',
-        'cardapio': '🍔 Gerenciamento do Cardápio & Estoque',
-        'whatsapp': '🤖 Robô de WhatsApp Inteligente',
-        'config': '⚙️ Dados da Loja & Recebimento de PIX',
-        'relatorios': '📊 Relatórios de Vendas & Faturamento'
-      };
-      document.getElementById('section-title').textContent = titleMap[sectionId] || 'Painel de Gestão';
-    }
+    let currentRestaurant = null;
+    let currentUser = null;
 
-    // Salvar configurações
-    function saveStoreSettings() {
-      const name = document.getElementById('cfg-store-name').value;
-      const pix = document.getElementById('cfg-pix-key').value;
-      const fee = parseFloat(document.getElementById('cfg-delivery-fee').value);
-      const eta = document.getElementById('cfg-eta').value;
+    const DAYS_LABEL_MAP = {
+      seg: "Segunda-feira",
+      ter: "Terça-feira",
+      qua: "Quarta-feira",
+      qui: "Quinta-feira",
+      sex: "Sexta-feira",
+      sab: "Sábado",
+      dom: "Domingo"
+    };
 
-      STORE_DATA.name = name;
-      STORE_DATA.pixKey = pix;
-      STORE_DATA.deliveryFee = fee;
-      STORE_DATA.eta = eta;
-      localStorage.setItem('anotazap_store_data', JSON.stringify(STORE_DATA));
+    // Inicialização da Página
+    async function initAdmin() {
+      currentUser = NimboAuth.getCurrentUser();
+      if (!currentUser) {
+        window.location.href = 'login.html';
+        return;
+      }
 
-      sounds.playSuccess();
-      alert('✅ Dados da loja e chave PIX atualizados com sucesso!');
-    }
+      document.getElementById('header-user-name').textContent = currentUser.fullName || currentUser.email;
 
-    function saveBotSettings() {
-      sounds.playSuccess();
-      alert('✅ Mensagens do robô de WhatsApp salvas com sucesso!');
-    }
+      // Busca restaurante ativo
+      currentRestaurant = NimboRestaurant.getActiveRestaurant();
 
-    function openNewProductPrompt() {
-      const name = prompt("Nome do novo lanche/produto:");
-      if (!name) return;
-      const price = parseFloat(prompt("Preço do produto (Ex: 22.00):") || "20");
-      
-      PRODUCTS.push({
-        id: Date.now(),
-        category: "lanches",
-        name: name,
-        description: "Novo produto adicionado pelo restaurante.",
-        price: price,
-        image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=500&q=80",
-        isPopular: true,
-        addons: []
-      });
+      // Se não tiver restaurante, exibe fluxo guiado de primeiros passos
+      if (!currentRestaurant) {
+        document.getElementById('onboarding-view').style.display = 'block';
+        document.getElementById('admin-view').style.display = 'none';
+        return;
+      }
 
-      localStorage.setItem('anotazap_products', JSON.stringify(PRODUCTS));
+      // Exibe painel
+      document.getElementById('onboarding-view').style.display = 'none';
+      document.getElementById('admin-view').style.display = 'flex';
+
+      populateRestaurantUI();
+      renderCategoryChips();
       renderAdminProductsTable();
-      sounds.playSuccess();
-      alert(`🍔 ${name} adicionado ao cardápio com sucesso!`);
+      renderPlansSection();
+      renderHoursTable();
+      renderKdsBoard();
     }
 
-    // Renderiza tabela de gestão de produtos no painel
+    // Preenche dados do restaurante na UI
+    function populateRestaurantUI() {
+      const rest = currentRestaurant;
+      document.getElementById('sidebar-rest-name').textContent = rest.name;
+      document.getElementById('sidebar-rest-avatar').textContent = rest.avatar ? '' : '🍽️';
+      if (rest.avatar) {
+        document.getElementById('sidebar-rest-avatar').style.backgroundImage = `url(${rest.avatar})`;
+        document.getElementById('sidebar-rest-avatar').style.backgroundSize = 'cover';
+      }
+
+      // Badge do Plano
+      const planBadge = document.getElementById('sidebar-plan-badge');
+      planBadge.className = `plan-badge ${rest.plan}`;
+      planBadge.textContent = (NIMBO_PLANS[rest.plan] ? NIMBO_PLANS[rest.plan].name : rest.plan).toUpperCase();
+
+      // Link do Cardápio Público
+      const menuUrl = `index.html?r=${rest.slug}`;
+      document.getElementById('link-public-menu').href = menuUrl;
+      document.getElementById('switcher-menu-link').href = menuUrl;
+
+      // Toggle de Recebimento de Pedidos
+      const toggle = document.getElementById('header-orders-toggle');
+      const label = document.getElementById('header-orders-status-label');
+      toggle.checked = !!rest.acceptingOrders;
+      if (rest.acceptingOrders) {
+        label.textContent = "Recebendo Pedidos";
+        label.style.color = "#10B981";
+      } else {
+        label.textContent = "Pausado";
+        label.style.color = "#94A3B8";
+      }
+
+      // Portões de plano para alertas
+      const isFree = rest.plan === 'free';
+      const isPro = rest.plan === 'pro';
+      document.getElementById('kds-plan-gate-alert').style.display = isFree ? 'block' : 'none';
+      document.getElementById('bot-plan-gate-alert').style.display = isPro ? 'none' : 'block';
+      document.getElementById('reports-plan-gate-alert').style.display = isPro ? 'none' : 'block';
+
+      // Configurações nos inputs
+      document.getElementById('cfg-name').value = rest.name || '';
+      document.getElementById('cfg-slug').value = rest.slug || '';
+      if (document.getElementById('cfg-category-type')) {
+        document.getElementById('cfg-category-type').value = rest.categoryType || 'Lanchonete & Hambúrgueres';
+      }
+      document.getElementById('cfg-tagline').value = rest.tagline || '';
+      document.getElementById('cfg-desc').value = rest.description || '';
+      document.getElementById('cfg-avatar').value = rest.avatar || '';
+      document.getElementById('cfg-cover').value = rest.cover || '';
+      document.getElementById('cfg-whatsapp').value = rest.whatsapp || '';
+      document.getElementById('cfg-phone').value = rest.phone || '';
+      document.getElementById('cfg-pix').value = rest.pixKey || '';
+      document.getElementById('cfg-delivery-fee').value = rest.deliveryFee !== undefined ? rest.deliveryFee : 5.00;
+      document.getElementById('cfg-eta').value = rest.eta || '30-45 min';
+
+      populateDashboard();
+      updateVisualPreview();
+      setupPhonePreview();
+    }
+
+    // Renderiza tabela de horários de funcionamento
+    function renderHoursTable() {
+      const tbody = document.getElementById('cfg-hours-tbody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      const hours = currentRestaurant.businessHours || {};
+      const days = ['seg', 'ter', 'qua', 'qui', 'sex', 'sab', 'dom'];
+
+      days.forEach(day => {
+        const item = hours[day] || { open: true, start: "18:00", end: "23:00" };
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="hours-day-label">${DAYS_LABEL_MAP[day]}</td>
+          <td>
+            <label style="display:flex;align-items:center;gap:6px;font-size:12.5px;cursor:pointer;">
+              <input type="checkbox" id="h-open-${day}" ${item.open ? 'checked' : ''} style="accent-color:var(--nimbo-lime)">
+              <span>${item.open ? 'Aberto' : 'Fechado'}</span>
+            </label>
+          </td>
+          <td>
+            <input type="time" class="hours-time-input" id="h-start-${day}" value="${item.start || '18:00'}" ${item.open ? '' : 'disabled'}>
+            <span style="color:#94A3B8;margin:0 4px;">até</span>
+            <input type="time" class="hours-time-input" id="h-end-${day}" value="${item.end || '23:00'}" ${item.open ? '' : 'disabled'}>
+          </td>
+        `;
+
+        // Vincula evento para habilitar/desabilitar inputs de hora
+        const check = tr.querySelector(`#h-open-${day}`);
+        check.addEventListener('change', () => {
+          const isChecked = check.checked;
+          tr.querySelector('label span').textContent = isChecked ? 'Aberto' : 'Fechado';
+          tr.querySelector(`#h-start-${day}`).disabled = !isChecked;
+          tr.querySelector(`#h-end-${day}`).disabled = !isChecked;
+        });
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Renderiza chips de categorias
+    function renderCategoryChips() {
+      const bar = document.getElementById('admin-category-chips');
+      if (!bar) return;
+      bar.innerHTML = '';
+
+      const categories = NimboMenu.getCategories(currentRestaurant.id);
+      categories.forEach(cat => {
+        const chip = document.createElement('div');
+        chip.className = 'category-chip';
+        chip.innerHTML = `
+          <span>🏷️ ${cat.name}</span>
+          <button onclick="handleDeleteCategory('${cat.id}')" title="Excluir categoria">✕</button>
+        `;
+        bar.appendChild(chip);
+      });
+    }
+
+    // Renderiza tabela de produtos
     function renderAdminProductsTable() {
       const tbody = document.getElementById('admin-products-table-body');
+      const table = document.getElementById('admin-products-table');
+      const emptyState = document.getElementById('admin-products-empty');
       if (!tbody) return;
-      tbody.innerHTML = "";
 
-      PRODUCTS.forEach(p => {
+      tbody.innerHTML = '';
+      const products = NimboMenu.getProducts(currentRestaurant.id);
+
+      if (products.length === 0) {
+        table.style.display = 'none';
+        emptyState.style.display = 'block';
+        return;
+      }
+
+      table.style.display = 'table';
+      emptyState.style.display = 'none';
+
+      products.forEach(p => {
         const tr = document.createElement('tr');
+        const imgUrl = p.image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=150&q=80';
         tr.innerHTML = `
           <td>
             <div style="display:flex; align-items:center; gap:12px;">
-              <img src="${p.image}" style="width:42px; height:42px; border-radius:8px; object-fit:cover;">
+              <img src="${imgUrl}" alt="${p.name}" style="width:44px; height:44px; border-radius:8px; object-fit:cover; background:#0B1220;">
               <div>
                 <strong style="color:white;">${p.name}</strong>
-                <div style="font-size:11px; color:#94A3B8;">${p.description.substring(0, 45)}...</div>
+                <div style="font-size:11px; color:#94A3B8; max-width:240px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                  ${p.description || 'Sem descrição'}
+                </div>
               </div>
             </div>
           </td>
-          <td><span style="background:#334155; padding:3px 8px; border-radius:4px; font-size:11px; text-transform:uppercase;">${p.category}</span></td>
+          <td><span style="background:#0F172A; border:1px solid #334155; padding:3px 8px; border-radius:4px; font-size:11px; text-transform:uppercase;">${p.category}</span></td>
           <td><strong style="color:#FF5A1F;">R$ ${p.price.toFixed(2).replace('.', ',')}</strong></td>
           <td>
             <label class="status-switch">
-              <input type="checkbox" checked onchange="toggleProductAvailability(${p.id}, this)">
+              <input type="checkbox" ${p.isAvailable ? 'checked' : ''} onchange="handleToggleProductAvailability('${p.id}')">
               <span class="switch-slider"></span>
             </label>
-            <span style="font-size:11px; color:#10B981; margin-left:8px; font-weight:700;">Disponível</span>
+            <span style="font-size:11px; color:${p.isAvailable ? '#10B981' : '#EF4444'}; margin-left:8px; font-weight:700;">
+              ${p.isAvailable ? 'Disponível' : 'Pausado'}
+            </span>
           </td>
           <td>
-            <button onclick="editProductPrice(${p.id})" style="background:#334155; color:white; border:none; padding:6px 10px; border-radius:6px; cursor:pointer; font-size:11px; font-weight:700;">
-              ✏️ Mudar Preço
-            </button>
+            <div style="display:flex; gap:6px;">
+              <button onclick="openProductEditorModal('${p.id}')" style="background:#334155; color:white; border:none; padding:6px 10px; border-radius:6px; cursor:pointer; font-size:11px; font-weight:700;">
+                ✏️ Editar
+              </button>
+              <button onclick="handleDeleteProduct('${p.id}')" style="background:rgba(239,68,68,0.15); color:#F87171; border:1px solid rgba(239,68,68,0.3); padding:6px 10px; border-radius:6px; cursor:pointer; font-size:11px; font-weight:700;">
+                🗑️ Excluir
+              </button>
+            </div>
           </td>
         `;
         tbody.appendChild(tr);
       });
     }
 
-    function toggleProductAvailability(id, checkbox) {
-      sounds.playWhatsApp();
-      const statusSpan = checkbox.parentElement.nextElementSibling;
-      if (checkbox.checked) {
-        statusSpan.textContent = "Disponível";
-        statusSpan.style.color = "#10B981";
+    // Renderiza cards de planos
+    function renderPlansSection() {
+      const container = document.getElementById('admin-plans-container');
+      if (!container) return;
+      container.innerHTML = '';
+
+      Object.values(NIMBO_PLANS).forEach(plan => {
+        const isCurrent = currentRestaurant.plan === plan.id;
+        const card = document.createElement('div');
+        card.className = `plan-card-admin ${isCurrent ? 'active' : ''}`;
+        
+        let featuresHtml = plan.features.map(f => `
+          <li class="${f.included ? '' : 'disabled'}">
+            <span>${f.included ? '✓' : '✕'}</span>
+            <span style="${f.bold ? 'font-weight:700;color:white;' : ''}">${f.text}</span>
+            ${f.highlightBadge ? `<span style="font-size:10px; background:rgba(184,243,107,0.15); color:var(--nimbo-lime); padding:2px 6px; border-radius:4px; margin-left:auto;">${f.highlightBadge}</span>` : ''}
+          </li>
+        `).join('');
+
+        card.innerHTML = `
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <h4 style="font-size:18px; font-weight:800; color:white;">${plan.name}</h4>
+              <span class="plan-badge ${plan.id}">${plan.badge}</span>
+            </div>
+            <p style="font-size:12.5px; color:#94A3B8;">${plan.tagline}</p>
+            <div style="font-size:32px; font-weight:900; color:${plan.color}; margin-top:14px;">
+              ${plan.priceFormatted} <small style="font-size:14px; color:#94A3B8; font-weight:500;">${plan.period}</small>
+            </div>
+            <ul class="plan-features-list">
+              ${featuresHtml}
+            </ul>
+          </div>
+          <button 
+            class="${isCurrent ? 'btn-nimbo-secondary' : 'btn-nimbo-primary'}" 
+            style="width:100%; justify-content:center; padding:12px;"
+            ${isCurrent ? 'disabled' : ''}
+            onclick="handleSelectPlan('${plan.id}')">
+            ${isCurrent ? 'Plano Atual Ativo' : plan.ctaText}
+          </button>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // Renderiza quadro KDS
+    function renderKdsBoard() {
+      if (!currentRestaurant) return;
+      const orders = NimboOrders.getOrders(currentRestaurant.id);
+
+      const colNew = document.getElementById('kds-orders-new');
+      const colPrep = document.getElementById('kds-orders-prep');
+      const colRoute = document.getElementById('kds-orders-route');
+      const colDone = document.getElementById('kds-orders-done');
+
+      colNew.innerHTML = '';
+      colPrep.innerHTML = '';
+      colRoute.innerHTML = '';
+      colDone.innerHTML = '';
+
+      let countNew = 0, countPrep = 0, countRoute = 0, countDone = 0;
+      let totalRevenue = 0;
+
+      orders.forEach(order => {
+        totalRevenue += order.total || 0;
+        const card = createKdsOrderCard(order);
+
+        if (order.status === 'new') {
+          countNew++;
+          colNew.appendChild(card);
+        } else if (order.status === 'prep') {
+          countPrep++;
+          colPrep.appendChild(card);
+        } else if (order.status === 'route') {
+          countRoute++;
+          colRoute.appendChild(card);
+        } else if (order.status === 'done') {
+          countDone++;
+          colDone.appendChild(card);
+        }
+      });
+
+      document.getElementById('count-new').textContent = countNew;
+      document.getElementById('count-prep').textContent = countPrep;
+      document.getElementById('count-route').textContent = countRoute;
+      document.getElementById('count-done').textContent = countDone;
+      document.getElementById('sidebar-order-badge').textContent = countNew;
+
+      document.getElementById('kds-stat-revenue').textContent = `R$ ${totalRevenue.toFixed(2).replace('.', ',')}`;
+      document.getElementById('kds-stat-count').textContent = orders.length;
+      document.getElementById('kds-stat-ticket').textContent = orders.length > 0 
+        ? `R$ ${(totalRevenue / orders.length).toFixed(2).replace('.', ',')}` 
+        : 'R$ 0,00';
+      document.getElementById('kds-stat-eta').textContent = currentRestaurant.eta || '30 min';
+    }
+
+    function createKdsOrderCard(order) {
+      const div = document.createElement('div');
+      div.className = 'order-card';
+      div.style.background = '#0F172A';
+      div.style.borderColor = '#334155';
+
+      let nextButtonHtml = '';
+      if (order.status === 'new') {
+        nextButtonHtml = `<button class="btn-step-action to-prep" onclick="advanceOrderStatus('${order.id}', 'prep')">🍳 Iniciar Preparo</button>`;
+      } else if (order.status === 'prep') {
+        nextButtonHtml = `<button class="btn-step-action to-route" onclick="advanceOrderStatus('${order.id}', 'route')">🛵 Despachar Motoboy</button>`;
+      } else if (order.status === 'route') {
+        nextButtonHtml = `<button class="btn-step-action to-done" onclick="advanceOrderStatus('${order.id}', 'done')">✅ Concluir Pedido</button>`;
+      }
+
+      div.innerHTML = `
+        <div class="order-top">
+          <span class="order-id">#${order.orderNumber || order.id}</span>
+          <span class="order-time">⏱️ ${order.time}</span>
+        </div>
+        <div class="order-client" style="color:white; font-weight:700;">${order.customer}</div>
+        <div class="order-type-badge">${order.type.toUpperCase()} • R$ ${order.total.toFixed(2).replace('.', ',')}</div>
+        <div class="order-items-preview" style="font-size:12px; color:#CBD5E1; margin:8px 0;">
+          ${(order.items || []).map(i => `${i.quantity || 1}x ${i.name}`).join(', ')}
+        </div>
+        <div class="order-actions">
+          ${nextButtonHtml}
+        </div>
+      `;
+      return div;
+    }
+
+    window.advanceOrderStatus = function(orderId, nextStatus) {
+      NimboOrders.updateOrderStatus(currentRestaurant.id, orderId, nextStatus);
+      renderKdsBoard();
+    };
+
+    // Alternador de Pedidos Online no Header
+    window.handleOrdersToggle = function(checkbox) {
+      const isFree = currentRestaurant.plan === 'free';
+      if (isFree && checkbox.checked) {
+        checkbox.checked = false;
+        openActivateOrdersModal();
+        return;
+      }
+
+      // Atualiza restaurante
+      NimboRestaurant.updateRestaurant(currentRestaurant.id, {
+        acceptingOrders: checkbox.checked
+      });
+      currentRestaurant = NimboRestaurant.getActiveRestaurant();
+      populateRestaurantUI();
+    };
+
+    // Modal de Ativação de Pedidos (Requisito 6)
+    window.openActivateOrdersModal = function() {
+      document.getElementById('modal-activate-orders').style.display = 'flex';
+    };
+
+    window.closeActivateOrdersModal = function() {
+      document.getElementById('modal-activate-orders').style.display = 'none';
+    };
+
+    window.handleGoToPlansFromModal = function() {
+      closeActivateOrdersModal();
+      switchAdminSection('planos');
+    };
+
+    // Upgrade e Seleção de Planos
+    window.handleSelectPlan = function(targetPlanId) {
+      const targetPlan = NIMBO_PLANS[targetPlanId];
+      if (!targetPlan) return;
+
+      const confirmMsg = `Deseja ativar o ${targetPlan.name} (${targetPlan.priceFormatted}/mês) para o restaurante "${currentRestaurant.name}"?`;
+      if (confirm(confirmMsg)) {
+        NimboPlans.simulateUpgrade(currentRestaurant.id, targetPlanId);
+        currentRestaurant = NimboRestaurant.getActiveRestaurant();
+        populateRestaurantUI();
+        renderPlansSection();
+        alert(`🎉 Parabéns! O plano ${targetPlan.name} foi ativado com sucesso!`);
+      }
+    };
+
+    // Salvar configurações da loja e horários
+    window.handleSaveStoreSettings = function(event) {
+      event.preventDefault();
+      const name = document.getElementById('cfg-name').value.trim();
+      const slug = document.getElementById('cfg-slug').value.trim();
+      const tagline = document.getElementById('cfg-tagline').value.trim();
+      const desc = document.getElementById('cfg-desc').value.trim();
+      const avatar = document.getElementById('cfg-avatar').value.trim();
+      const cover = document.getElementById('cfg-cover').value.trim();
+      const whatsapp = document.getElementById('cfg-whatsapp').value.trim();
+      const phone = document.getElementById('cfg-phone').value.trim();
+      const pix = document.getElementById('cfg-pix').value.trim();
+      const fee = parseFloat(document.getElementById('cfg-delivery-fee').value) || 0.00;
+      const eta = document.getElementById('cfg-eta').value.trim();
+
+      // Coleta horários
+      const businessHours = {};
+      ['seg', 'ter', 'qua', 'qui', 'sex', 'sab', 'dom'].forEach(day => {
+        businessHours[day] = {
+          open: document.getElementById(`h-open-${day}`).checked,
+          start: document.getElementById(`h-start-${day}`).value,
+          end: document.getElementById(`h-end-${day}`).value
+        };
+      });
+
+      try {
+        NimboRestaurant.updateRestaurant(currentRestaurant.id, {
+          name, slug, tagline, description: desc, avatar, cover,
+          whatsapp, phone, pixKey: pix, deliveryFee: fee, eta, businessHours
+        });
+        currentRestaurant = NimboRestaurant.getActiveRestaurant();
+        populateRestaurantUI();
+        alert('✅ Dados do restaurante e horários de funcionamento salvos com sucesso!');
+      } catch (err) {
+        alert('Erro ao salvar: ' + err.message);
+      }
+    };
+
+    // Modal de Categoria
+    window.openNewCategoryModal = function() {
+      const name = prompt("Nome da nova categoria (ex: Sobremesas, Bebidas, Lanches):");
+      if (!name || !name.trim()) return;
+      NimboMenu.createCategory(currentRestaurant.id, name);
+      renderCategoryChips();
+    };
+
+    window.handleDeleteCategory = function(catId) {
+      if (confirm("Excluir esta categoria?")) {
+        NimboMenu.deleteCategory(currentRestaurant.id, catId);
+        renderCategoryChips();
+      }
+    };
+
+    // Modal de Produto
+    window.openProductEditorModal = function(productId = null) {
+      const modal = document.getElementById('modal-product-editor');
+      const catSelect = document.getElementById('prod-form-cat');
+      catSelect.innerHTML = '';
+
+      const categories = NimboMenu.getCategories(currentRestaurant.id);
+      if (categories.length === 0) {
+        NimboMenu.createCategory(currentRestaurant.id, 'Principal');
+      }
+      NimboMenu.getCategories(currentRestaurant.id).forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.slug;
+        opt.textContent = c.name;
+        catSelect.appendChild(opt);
+      });
+
+      if (productId) {
+        const products = NimboMenu.getProducts(currentRestaurant.id);
+        const prod = products.find(p => p.id === productId);
+        if (prod) {
+          document.getElementById('prod-modal-title').textContent = 'Editar Produto';
+          document.getElementById('prod-form-id').value = prod.id;
+          document.getElementById('prod-form-name').value = prod.name;
+          document.getElementById('prod-form-cat').value = prod.category;
+          document.getElementById('prod-form-price').value = prod.price;
+          document.getElementById('prod-form-desc').value = prod.description || '';
+          document.getElementById('prod-form-image').value = prod.image || '';
+          document.getElementById('prod-form-available').checked = !!prod.isAvailable;
+        }
       } else {
-        statusSpan.textContent = "Esgotado";
-        statusSpan.style.color = "#EF4444";
+        document.getElementById('prod-modal-title').textContent = 'Novo Produto';
+        document.getElementById('prod-form-id').value = '';
+        document.getElementById('prod-form-name').value = '';
+        document.getElementById('prod-form-price').value = '';
+        document.getElementById('prod-form-desc').value = '';
+        document.getElementById('prod-form-image').value = '';
+        document.getElementById('prod-form-available').checked = true;
       }
-    }
 
-    function editProductPrice(id) {
-      const p = PRODUCTS.find(prod => prod.id === id);
-      if (!p) return;
-      const newPrice = prompt(`Novo preço para "${p.name}":`, p.price.toFixed(2));
-      if (newPrice && !isNaN(parseFloat(newPrice))) {
-        p.price = parseFloat(newPrice);
-        localStorage.setItem('anotazap_products', JSON.stringify(PRODUCTS));
-        renderAdminProductsTable();
-        sounds.playSuccess();
+      modal.style.display = 'flex';
+    };
+
+    window.closeProductEditorModal = function() {
+      document.getElementById('modal-product-editor').style.display = 'none';
+    };
+
+    window.handleProductFormSubmit = function(e) {
+      e.preventDefault();
+      const id = document.getElementById('prod-form-id').value;
+      const payload = {
+        name: document.getElementById('prod-form-name').value,
+        category: document.getElementById('prod-form-cat').value,
+        price: parseFloat(document.getElementById('prod-form-price').value) || 0,
+        description: document.getElementById('prod-form-desc').value,
+        image: document.getElementById('prod-form-image').value,
+        isAvailable: document.getElementById('prod-form-available').checked
+      };
+
+      if (id) {
+        NimboMenu.updateProduct(currentRestaurant.id, id, payload);
+      } else {
+        NimboMenu.createProduct(currentRestaurant.id, payload);
       }
-    }
 
-    document.addEventListener('DOMContentLoaded', () => {
+      closeProductEditorModal();
       renderAdminProductsTable();
-    });
+    };
+
+    window.handleToggleProductAvailability = function(productId) {
+      NimboMenu.toggleAvailability(currentRestaurant.id, productId);
+      renderAdminProductsTable();
+    };
+
+    window.handleDeleteProduct = function(productId) {
+      if (confirm("Tem certeza que deseja excluir este produto do cardápio?")) {
+        NimboMenu.deleteProduct(currentRestaurant.id, productId);
+        renderAdminProductsTable();
+      }
+    };
+
+    // Submissão do Onboarding Inicial
+    window.handleOnboardingSubmit = function(e) {
+      e.preventDefault();
+      const name = document.getElementById('onb-name').value;
+      const tagline = document.getElementById('onb-tagline').value;
+      const whatsapp = document.getElementById('onb-whatsapp').value;
+      const desc = document.getElementById('onb-desc').value;
+
+      try {
+        const rest = NimboRestaurant.createRestaurant({
+          name, tagline, whatsapp, description: desc
+        });
+        currentRestaurant = rest;
+        initAdmin();
+      } catch (err) {
+        alert(err.message);
+      }
+    };
+
+    // Copiar Link
+    window.copyPublicMenuLink = function() {
+      const url = `${window.location.origin}/index.html?r=${currentRestaurant.slug}`;
+      navigator.clipboard.writeText(url).then(() => {
+        alert('📋 Link do cardápio copiado para a área de transferência!\n\n' + url);
+      }).catch(() => {
+        prompt('Copie o link do seu cardápio:', url);
+      });
+    };
+
+    // Carregar Demonstração Isolada
+    window.handleLoadDemoPrompt = function() {
+      if (confirm("Deseja abrir o Restaurante Modelo de Demonstração (Hambúrgueres) para testar os recursos?")) {
+        const demo = NimboRestaurant.loadDemoRestaurant();
+        NimboRestaurant.setActiveRestaurant(demo.id);
+        window.location.reload();
+      }
+    };
+
+    // Logout
+    window.handleLogout = function() {
+      NimboAuth.signOut();
+      window.location.href = 'login.html';
+    };
+
+    // =========================================================================
+    // CONTROLADORES DO DASHBOARD DE BOAS-VINDAS & CHECKLIST
+    // =========================================================================
+    function populateDashboard() {
+      const rest = currentRestaurant;
+      if (!rest) return;
+
+      // Saudação personalizada com primeiro nome
+      const userName = (currentUser && currentUser.fullName) ? currentUser.fullName.split(' ')[0] : 'Lojista';
+      const welcomeEl = document.getElementById('dash-welcome-user');
+      if (welcomeEl) welcomeEl.textContent = `Bem-vindo(a), ${userName}! 👋`;
+      
+      const storeNameEl = document.getElementById('dash-store-name');
+      if (storeNameEl) storeNameEl.textContent = rest.name || 'Seu Restaurante';
+
+      // Link permanente oficial
+      const origin = window.location.origin;
+      const path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+      const publicUrl = `${origin}${path}index.html?r=${rest.slug}`;
+      
+      const publicUrlDisplay = document.getElementById('dash-public-url-display');
+      if (publicUrlDisplay) publicUrlDisplay.textContent = publicUrl;
+
+      const openTabBtn = document.getElementById('dash-open-tab-btn');
+      if (openTabBtn) openTabBtn.href = publicUrl;
+
+      // Produtos
+      const products = NimboMenu.getProducts(rest.id) || [];
+      const itemsEl = document.getElementById('dash-metric-items');
+      if (itemsEl) itemsEl.textContent = `${products.length} ${products.length === 1 ? 'item' : 'itens'}`;
+
+      // Plano
+      const planName = NIMBO_PLANS[rest.plan] ? NIMBO_PLANS[rest.plan].name : 'Grátis';
+      const planEl = document.getElementById('dash-metric-plan');
+      if (planEl) planEl.textContent = planName;
+
+      // Status Aberto/Fechado
+      const isOpen = isStoreOpenNow(rest.businessHours);
+      const statusEl = document.getElementById('dash-metric-status');
+      if (statusEl) {
+        statusEl.innerHTML = isOpen ? '🟢 Aberto Agora' : '🔴 Fechado Agora';
+        statusEl.style.color = isOpen ? 'var(--nimbo-lime)' : '#F87171';
+      }
+
+      // Modo de Pedidos
+      const ordersModeEl = document.getElementById('dash-metric-orders-mode');
+      if (ordersModeEl) {
+        if (rest.plan === 'free') {
+          ordersModeEl.innerHTML = '💬 WhatsApp <small style="font-size:11px;color:#94A3B8;">(Consultivo)</small>';
+        } else if (rest.acceptingOrders) {
+          ordersModeEl.innerHTML = '🍳 KDS Cozinha <small style="font-size:11px;color:#10B981;">(Ativo)</small>';
+        } else {
+          ordersModeEl.innerHTML = '⏸️ Pausado';
+        }
+      }
+
+      // Checklist de Primeiros Passos
+      let completedSteps = 1; // Passo 1: Conta Criada sempre OK
+
+      // Passo 2: Personalizar Loja
+      const hasCustomDetails = !!(rest.tagline || rest.description || rest.avatar || rest.cover);
+      const rowPersonalizar = document.getElementById('check-step-personalizar');
+      const iconPersonalizar = document.getElementById('icon-step-personalizar');
+      if (rowPersonalizar && iconPersonalizar) {
+        if (hasCustomDetails) {
+          completedSteps++;
+          rowPersonalizar.classList.add('completed');
+          iconPersonalizar.textContent = '✓';
+        } else {
+          rowPersonalizar.classList.remove('completed');
+          iconPersonalizar.textContent = '2';
+        }
+      }
+
+      // Passo 3: Cadastrar Produtos
+      const hasProducts = products.length > 0;
+      const rowProdutos = document.getElementById('check-step-produtos');
+      const iconProdutos = document.getElementById('icon-step-produtos');
+      if (rowProdutos && iconProdutos) {
+        if (hasProducts) {
+          completedSteps++;
+          rowProdutos.classList.add('completed');
+          iconProdutos.textContent = '✓';
+        } else {
+          rowProdutos.classList.remove('completed');
+          iconProdutos.textContent = '3';
+        }
+      }
+
+      // Passo 4: Ver e Divulgar
+      const rowPreview = document.getElementById('check-step-preview');
+      const iconPreview = document.getElementById('icon-step-preview');
+      if (rowPreview && iconPreview) {
+        if (hasProducts && hasCustomDetails) {
+          completedSteps++;
+          rowPreview.classList.add('completed');
+          iconPreview.textContent = '✓';
+        } else {
+          rowPreview.classList.remove('completed');
+          iconPreview.textContent = '4';
+        }
+      }
+
+      // Atualiza barra de progresso
+      const pct = Math.round((completedSteps / 4) * 100);
+      const fillEl = document.getElementById('dash-progress-fill');
+      if (fillEl) fillEl.style.width = `${pct}%`;
+
+      const badgeEl = document.getElementById('dash-progress-badge');
+      if (badgeEl) badgeEl.textContent = `${completedSteps} de 4 passos (${pct}%)`;
+    }
+
+    // Verifica se a loja está aberta agora com base nos horários
+    function isStoreOpenNow(businessHours) {
+      if (!businessHours) return true;
+      const days = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sab'];
+      const now = new Date();
+      const currentDay = days[now.getDay()];
+      const dayConfig = businessHours[currentDay];
+      if (!dayConfig || !dayConfig.open) return false;
+
+      const currentMinutes = now.getHours() * 60 + now.getMinutes();
+      const [startH, startM] = (dayConfig.start || "18:00").split(':').map(Number);
+      const [endH, endM] = (dayConfig.end || "23:00").split(':').map(Number);
+      const startMinutes = startH * 60 + startM;
+      let endMinutes = endH * 60 + endM;
+      if (endMinutes < startMinutes) endMinutes += 24 * 60; // Horário passa da meia-noite
+
+      return currentMinutes >= startMinutes && currentMinutes <= endMinutes;
+    }
+
+    // =========================================================================
+    // CONTROLADORES DA ABA PERSONALIZAR ESTABELECIMENTO
+    // =========================================================================
+    window.updateVisualPreview = function() {
+      const name = (document.getElementById('cfg-name') && document.getElementById('cfg-name').value.trim()) || (currentRestaurant ? currentRestaurant.name : 'Meu Restaurante');
+      const tagline = (document.getElementById('cfg-tagline') && document.getElementById('cfg-tagline').value.trim()) || 'Prévia em tempo real da sua capa';
+      const coverUrl = (document.getElementById('cfg-cover') && document.getElementById('cfg-cover').value.trim()) || (currentRestaurant && currentRestaurant.cover ? currentRestaurant.cover : 'https://images.unsplash.com/photo-1550547660-d9450f859349?w=1000&auto=format&fit=crop&q=80');
+      const avatarUrl = (document.getElementById('cfg-avatar') && document.getElementById('cfg-avatar').value.trim()) || (currentRestaurant && currentRestaurant.avatar ? currentRestaurant.avatar : 'https://images.unsplash.com/photo-1550547660-d9450f859349?w=200&auto=format&fit=crop&q=80');
+
+      const coverImg = document.getElementById('preview-cover-img');
+      const avatarImg = document.getElementById('preview-avatar-img');
+      const titleText = document.getElementById('preview-title-text');
+      const taglineText = document.getElementById('preview-tagline-text');
+
+      if (coverImg) coverImg.src = coverUrl;
+      if (avatarImg) avatarImg.src = avatarUrl;
+      if (titleText) titleText.textContent = name;
+      if (taglineText) taglineText.textContent = tagline;
+    };
+
+    window.handleConfigSubmit = function(e) {
+      e.preventDefault();
+      const days = ['seg', 'ter', 'qua', 'qui', 'sex', 'sab', 'dom'];
+      const businessHours = {};
+      days.forEach(day => {
+        const check = document.getElementById(`h-open-${day}`);
+        const start = document.getElementById(`h-start-${day}`);
+        const end = document.getElementById(`h-end-${day}`);
+        businessHours[day] = {
+          open: check ? check.checked : true,
+          start: start ? start.value : "18:00",
+          end: end ? end.value : "23:00"
+        };
+      });
+
+      const payload = {
+        name: document.getElementById('cfg-name').value.trim(),
+        slug: document.getElementById('cfg-slug').value.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-'),
+        categoryType: document.getElementById('cfg-category-type') ? document.getElementById('cfg-category-type').value : 'Lanchonete & Hambúrgueres',
+        tagline: document.getElementById('cfg-tagline').value.trim(),
+        description: document.getElementById('cfg-desc').value.trim(),
+        avatar: document.getElementById('cfg-avatar').value.trim(),
+        cover: document.getElementById('cfg-cover').value.trim(),
+        whatsapp: document.getElementById('cfg-whatsapp').value.trim(),
+        phone: document.getElementById('cfg-phone').value.trim(),
+        pixKey: document.getElementById('cfg-pix').value.trim(),
+        deliveryFee: parseFloat(document.getElementById('cfg-delivery-fee').value) || 0,
+        eta: document.getElementById('cfg-eta').value.trim() || '30-45 min',
+        businessHours
+      };
+
+      try {
+        const updated = NimboRestaurant.updateRestaurant(currentRestaurant.id, payload);
+        currentRestaurant = updated;
+        populateRestaurantUI();
+        reloadPhonePreview();
+        alert('✅ Personalização da loja salva com sucesso!');
+      } catch (err) {
+        alert('❌ Erro ao salvar dados: ' + err.message);
+      }
+    };
+
+    // =========================================================================
+    // CONTROLADORES DA ABA VER CARDÁPIO AO VIVO (SIMULADOR MOBILE)
+    // =========================================================================
+    window.setupPhonePreview = function() {
+      if (!currentRestaurant) return;
+      const iframe = document.getElementById('phone-preview-iframe');
+      const origin = window.location.origin;
+      const path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+      const url = `${origin}${path}index.html?r=${currentRestaurant.slug}`;
+
+      // Atualiza relógio da status bar do celular
+      const clock = document.getElementById('phone-clock-text');
+      if (clock) {
+        const now = new Date();
+        clock.textContent = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+      }
+
+      if (iframe && (!iframe.src || iframe.src === 'about:blank' || !iframe.src.includes(`r=${currentRestaurant.slug}`))) {
+        iframe.src = url;
+      }
+
+      const urlBox = document.getElementById('preview-url-box');
+      if (urlBox) urlBox.textContent = url;
+
+      const extLink = document.getElementById('preview-external-link');
+      if (extLink) extLink.href = url;
+
+      const shareWa = document.getElementById('preview-share-whatsapp-btn');
+      if (shareWa) {
+        const msg = `Olá! Confira o cardápio digital oficial da nossa loja: ${url}`;
+        shareWa.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`;
+      }
+    };
+
+    window.reloadPhonePreview = function() {
+      const iframe = document.getElementById('phone-preview-iframe');
+      if (iframe && currentRestaurant) {
+        const origin = window.location.origin;
+        const path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+        iframe.src = `${origin}${path}index.html?r=${currentRestaurant.slug}&t=${Date.now()}`;
+      }
+    };
+
+    // =========================================================================
+    // NAVEGAÇÃO DE ABAS DO PAINEL
+    // =========================================================================
+    window.switchAdminSection = function(sectionId, btnElement) {
+      document.querySelectorAll('.admin-section').forEach(sec => sec.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
+      
+      const targetSec = document.getElementById(`sec-${sectionId}`);
+      if (targetSec) targetSec.classList.add('active');
+      
+      const btn = btnElement || document.getElementById(`nav-btn-${sectionId}`);
+      if (btn) btn.classList.add('active');
+
+      const titleMap = {
+        'dashboard': ['🏠 Visão Geral & Boas-Vindas', 'Acompanhe o status do seu cardápio, primeiros passos e métricas da loja.'],
+        'personalizar': ['🏪 Personalizar Estabelecimento', 'Configure o nome, tipo de lanchonete/restaurante, fotos, horários e chave PIX.'],
+        'preview': ['📱 Ver Cardápio Ao Vivo', 'Teste o cardápio interativo em formato de smartphone em tempo real.'],
+        'cardapio': ['🍔 Gerenciamento do Cardápio & Itens', 'Adicione, edite ou pause produtos e categorias do seu cardápio digital.'],
+        'kds': ['🍳 Gestor de Pedidos da Cozinha (KDS)', 'Acompanhamento em tempo real • Conectado à produção da cozinha.'],
+        'whatsapp': ['🤖 Robô de WhatsApp Inteligente', 'Mensagens automáticas e simulação de atendimento.'],
+        'planos': ['💎 Planos de Assinatura Nimbo', 'Compare recursos e ative o recebimento de pedidos no seu restaurante.'],
+        'relatorios': ['📊 Relatórios de Vendas & Faturamento', 'Resumo de métricas operacionais e produtos mais vendidos.']
+      };
+
+      const info = titleMap[sectionId] || ['Painel de Gestão', ''];
+      document.getElementById('section-title').textContent = info[0];
+      document.getElementById('section-subtitle').textContent = info[1];
+
+      // Atualiza conteúdos contextuais ao trocar de aba
+      if (sectionId === 'dashboard') {
+        populateDashboard();
+      } else if (sectionId === 'personalizar') {
+        updateVisualPreview();
+      } else if (sectionId === 'preview') {
+        setupPhonePreview();
+      }
+    };
+
+    window.saveBotSettings = function() {
+      alert('✅ Mensagens do robô salvas com sucesso!');
+    };
+
+    window.simulateQuickAction = function(type) {
+      alert(`Simulando ação rápida "${type}" no WhatsApp.`);
+    };
+
+    window.sendWhatsAppClientMessage = function() {
+      const input = document.getElementById('wa-input-field');
+      if (input && input.value.trim()) {
+        input.value = '';
+        alert('Mensagem enviada no simulador!');
+      }
+    };
+
+    document.addEventListener('DOMContentLoaded', initAdmin);
+  </script>
+  <script>
+    // Barra de navegação interna: só aparece para o dono (abra qualquer página com ?dev=1)
+    try {
+      if (location.search.indexOf('dev=1') > -1) localStorage.setItem('nimboDev', '1');
+      if (location.search.indexOf('dev=0') > -1) localStorage.removeItem('nimboDev');
+      if (localStorage.getItem('nimboDev') === '1') document.body.classList.add('nimbo-dev');
+    } catch (e) {}
   </script>
 </body>
 </html>
